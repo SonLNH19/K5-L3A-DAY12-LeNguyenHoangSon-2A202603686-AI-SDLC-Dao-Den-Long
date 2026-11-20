@@ -1,3 +1,15 @@
+[hidden] { display:none !important; }
+.lamp-labels { position:fixed; inset:0; pointer-events:none; z-index:2; }
+.lamp-label { position:absolute; transform:translate(-50%,-100%); min-width:100px; padding:5px 8px; border:1px solid #a8b8b755; border-radius:5px; background:#091827dc; text-align:center; font-size:.72rem; color:#ffe2ad; }
+.lamp-label[hidden], .fuel-track[hidden] { display:none; }
+.fuel-track { height:5px; margin-top:4px; background:#ffffff22; border-radius:3px; overflow:hidden; }
+.fuel-track i { display:block; height:100%; background:#ffc66d; }
+.lamp-label.low-fuel { border-color:var(--danger); color:var(--danger); }
+.lamp-label.low-fuel .fuel-track i { background:var(--danger); }
+.lamp-progress .low-fuel { color:var(--danger); }
+.topbar, .stats, .quest, .controls { z-index:3; }
+.mote-slots { max-width:400px; flex-wrap:wrap; }
+#accessible-colors { width:22px; height:22px; accent-color:#00B3FF; }
 :root {
   color-scheme: dark;
   --bg-sky: #0E1430;

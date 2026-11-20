@@ -51,7 +51,7 @@
       <div class="eyebrow">THẮP SÁNG HÒN ĐẢO</div>
       <div class="quest-line"><span id="lamp-count">0</span><span class="muted" id="lamp-total-text">/ 5 đèn đã sáng</span></div>
       <div id="lamp-progress" class="lamp-progress" aria-label="Tiến độ đèn"></div>
-      <p id="objective">Gom đom đóm, mang ánh sáng về đèn.</p>
+      <p id="objective">Giữ ít nhất 3/5 đèn sáng tới bình minh. Nhớ châm dầu!</p>
       <canvas id="map" width="180" height="180" aria-label="Bản đồ đảo: vàng là đèn, tím là Bóng Mực, trắng là Mây"></canvas>
       <div class="map-caption" id="map-caption">ĐẢO BẾN <span>✦</span> BIỂN MÂY</div>
     </aside>
@@ -84,12 +84,14 @@
           <p><kbd>W A S D</kbd> Di chuyển · <kbd>SPACE</kbd> Nhảy · <kbd>SHIFT / J</kbd> Lướt (14 m/s)</p>
           <p><kbd>E</kbd> Nạp đèn · <kbd>F</kbd> Tỏa sáng (tốn 3 đom đóm, choáng Bóng Mực)</p>
           <p><kbd>Q / R</kbd> hoặc kéo chuột phải để xoay camera · <kbd>ESC / P</kbd> Tạm dừng</p>
-          <p>Mỗi đèn cần <b>10 đom đóm</b>. Đèn đã sáng tạo vùng an toàn 6m.</p>
+          <p>Thắp mới: <b>10 đom đóm</b> · Thắp lại: <b>5</b> · Nhấn E ở đèn sáng để châm dầu.</p>
+          <p>Giữ ít nhất 60% đèn sáng tới bình minh. Dầu dưới 30 mất vùng an toàn!</p>
         </div>
         <div id="overlay-buttons" class="overlay-buttons">
           <button id="start" class="primary-button">Bắt đầu chuyến đi <span aria-hidden="true">✦</span></button>
           <button id="overlay-retry" class="secondary-button" hidden>Chơi lại Đêm này</button>
           <button id="overlay-next" class="primary-button" hidden>Đêm tiếp theo <span aria-hidden="true">✦</span></button>
+          <button id="overlay-settings" class="secondary-button">Cài đặt</button>
         </div>
         <span id="overlay-foot" class="story-foot">3 HÒN ĐẢO · MỘT HÀNH TRÌNH THẮP SÁNG</span>
       </section>
@@ -99,6 +101,10 @@
     <div id="settings-modal" class="modal" hidden>
       <div class="modal-card">
         <h3>Cài đặt trò chơi</h3>
+        <div class="setting-row">
+          <label for="accessible-colors">Bảng màu dễ phân biệt</label>
+          <input type="checkbox" id="accessible-colors">
+        </div>
         <div class="setting-row">
           <label for="volume-slider">Âm lượng hiệu ứng</label>
           <input type="range" id="volume-slider" min="0" max="100" value="80">
@@ -115,6 +121,7 @@
       </div>
     </div>
 
+    <div id="lamp-labels" class="lamp-labels" aria-label="Mức dầu từng đèn"></div>
     <div id="error" class="error" role="alert" hidden></div>
   </main>
   <script type="module" src="/src/app.mjs"></script>

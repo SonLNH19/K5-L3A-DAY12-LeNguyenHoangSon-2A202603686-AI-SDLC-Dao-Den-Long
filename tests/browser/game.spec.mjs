@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 
-const proof = 'docs/proof/phase-2/browser';
+const proof = 'docs/proof/phase-3/browser';
 const fixture = name => JSON.parse(readFileSync(`tests/scenarios/${name}.json`, 'utf8'));
 
 test.beforeEach(async ({ page }) => {
@@ -31,13 +31,12 @@ test('3D renders without JS errors; start, keyboard, jump, dash, pause and respo
 
   // Test Dash (Shift)
   await page.keyboard.press('ShiftLeft');
-  await page.waitForTimeout(200);
-  expect(await page.evaluate(() => window.__qa.game.player.dashCdTicks)).toBeGreaterThan(0);
+  await expect.poll(()=>page.evaluate(()=>window.__qa.game.player.dashCdTicks)).toBeGreaterThan(0);
+  await expect.poll(()=>page.evaluate(()=>window.__qa.game.player.dashTicksLeft)).toBe(0);
 
   // Test Jump
   await page.keyboard.down('Space');
-  await page.waitForTimeout(180);
-  expect(await page.evaluate(() => window.__qa.game.player.pos[1])).toBeGreaterThan(0);
+  await expect.poll(()=>page.evaluate(()=>window.__qa.game.player.pos[1]),{intervals:[20,50,100],message:'Space must make the real player airborne'}).toBeGreaterThan(0);
   await page.keyboard.up('Space');
 
   // Test Pause (Escape)
@@ -67,16 +66,41 @@ test('3D renders without JS errors; start, keyboard, jump, dash, pause and respo
   await page.screenshot({ path: `${proof}/small-window.png` });
 
   expect(errors).toEqual([]);
-  writeFileSync(`${proof}/render.json`, JSON.stringify({ platform: process.platform, gl, page_errors: errors, scope: 'Phase 2 WebGL renderer' }, null, 2));
+  writeFileSync(`${proof}/render.json`, JSON.stringify({ platform: process.platform, gl, page_errors: errors, scope: 'Phase 3 Chromium software WebGL renderer; macOS/Linux not verified by this local report' }, null, 2));
 });
 
-test('real E key lights final lantern, wins and restarts cleanly', async ({ page }) => {
-  await page.evaluate(s => window.__qa.loadScenario(s), fixture('win'));
+// Ticket-03 replaces early all_lit: test real E, then advance actual ticks to dawn.
+test('real E lights final lantern without early win; dawn wins then next night resets capacity', async ({ page }) => {
+  await page.evaluate(s => window.__qa.loadScenario({...s,time_left_s:3}), fixture('win'));
   await page.keyboard.press('KeyE');
+  await expect(page.locator('#lamp-count')).toHaveText('5');
+  expect(await page.evaluate(() => window.__qa.game.state)).toBe('playing');
+  await expect(page.locator('#capacity')).toHaveText('12');
+  await page.evaluate(()=>window.__qa.advance(180));
   await expect(page.locator('#overlay')).toBeVisible();
   expect(await page.evaluate(() => window.__qa.game.state)).toBe('won');
   await expect(page.locator('#lamp-count')).toHaveText('5');
   await page.screenshot({ path: `${proof}/won.png` });
+  await page.locator('#overlay-next').click();await page.locator('#start').click();
+  expect(await page.evaluate(()=>window.__qa.game.night)).toBe(2);await expect(page.locator('#capacity')).toHaveText('10');
+});
+
+test('oil labels, collapsed torn lamps, refueling and saved accessible color setting',async({page})=>{
+  await page.evaluate(()=>window.__qa.loadScenario({random_motes:false,random_shades:false,motes:[],player:{carried:3},lanterns:[{id:'L1',pos:[0,0,0],lit:true,fuel:20},{id:'L2',pos:[3,0,0]}],shades:[{id:'S1',pos:[1,0,0],state:'drain',target_lantern_id:'L1'}]}));
+  await expect(page.locator('.lamp-label[data-lantern="L1"]')).toHaveClass(/low-fuel/);
+  await expect(page.locator('.lamp-label[data-lantern="L2"]')).toHaveAttribute('data-paper-scale','0.8');
+  await page.screenshot({path:`${proof}/low-fuel.png`});
+  await page.keyboard.press('KeyE');await expect.poll(()=>page.evaluate(()=>window.__qa.game.lanterns[0].fuel)).toBeGreaterThan(30);
+  await expect(page.locator('.lamp-label[data-lantern="L1"]')).not.toHaveClass(/low-fuel/);
+  await page.locator('#settings-btn').click();await page.getByLabel('Bảng màu dễ phân biệt').check();await page.locator('#close-settings').click();
+  expect(await page.evaluate(()=>window.__qa.settings.accessibleColors)).toBe(true);
+  expect(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--danger').trim())).toBe('#FFFFFF');
+  await page.locator('#start').click();
+  await expect.poll(()=>page.evaluate(()=>window.__qa.shadeColors[0]?.eyes)).toBe('00b3ff');
+  expect(await page.evaluate(()=>window.__qa.shadeColors[0].outline)).toBe('00b3ff');
+  await page.screenshot({path:`${proof}/accessible-colors.png`});
+  await page.reload();await page.waitForFunction(()=>Boolean(window.__qa));
+  await page.locator('#overlay-settings').click();await expect(page.getByLabel('Bảng màu dễ phân biệt')).toBeChecked();
 });
 
 test('loss and replay use actual collision rules', async ({ page }) => {
