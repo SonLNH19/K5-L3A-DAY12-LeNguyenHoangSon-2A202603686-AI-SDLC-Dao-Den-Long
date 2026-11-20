@@ -37,7 +37,8 @@
 - [x] README cài/chơi trong 3 lệnh, hướng dẫn macOS/Linux và lệnh kiểm tra.
 - [x] Giữ harness AGENTS.md và lịch sử/bằng chứng các phase trước; không force push.
 - [x] Changelog 4 phase, credits/license, retro và bàn giao agent.
-- [ ] Xác nhận clone sạch, ZIP và trạng thái public/tag/release: kết quả cuối được ghi trong release-verification.json khi kiểm tra xong.
+- [x] Clone sạch chạy đủ 3 lệnh README; ZIP chạy WebGL, 70 cây, không lỗi JavaScript và export bảng điểm. Repo đã xác nhận public qua GitHub API. Kết quả và SHA-256 gói nằm trong release-verification.json.
+- Tag/release: các tag phase-1…phase-3 được giữ nguyên; phase-4 và v1.0.0 dành cho commit phát hành. Xác nhận trên trang Tags/Release sau khi push; video sẽ được chủ bài đính kèm sau.
 - [ ] Chủ bài quay MP4 dưới 5 phút, gắn Release, cập nhật link đầu README và kiểm tra ẩn danh.
 - [ ] Chủ bài nộp link repo public lên LMS đúng hạn Coach; không commit sản phẩm sau hạn lab.
 

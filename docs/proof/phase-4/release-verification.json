@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-11-20T15:09:38.132Z",
+  "source_commit": "b24a5f417c0a52e9bb346955e56b9fc229aa6178",
+  "public_verified_via_github_api": true,
+  "clean_clone": {
+    "commands": [
+      "npm ci",
+      "npm run build",
+      "npm start"
+    ],
+    "install": "\nadded 4 packages in 1s\n",
+    "build": "\n> dao-den-long@1.0.0 build\n> node scripts/setup-browser.mjs && node scripts/build.mjs\n\nBrowser cho bench đã sẵn sàng.\nBuild thành công: dist/ (web tĩnh, không dùng CDN).\n",
+    "http": 200,
+    "webgl": true,
+    "trees": 70,
+    "page_errors": [],
+    "export": {
+      "entries": []
+    }
+  },
+  "zip": {
+    "file": "dao-den-long-v1.0.0.zip",
+    "sha256": "212e2ba61c782777b637196b8607f245d5e9cdc6390ea4da004919feffd6e111",
+    "http": 200,
+    "webgl": true,
+    "trees": 70,
+    "page_errors": [],
+    "export": {
+      "entries": []
+    }
+  },
+  "video": "user-will-record-before-submission"
+}
