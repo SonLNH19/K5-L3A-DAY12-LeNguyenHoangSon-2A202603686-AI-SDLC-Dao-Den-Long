@@ -11,3 +11,5 @@
 - Ảnh kiểm chứng: ảnh chụp thực tế từ browser test, không dùng ảnh tạo sinh để thay bằng chứng.
 
 - Phase 4: cây nhiều tán, đá rêu, dương xỉ, nấm, thân cây đổ tạo bằng geometry/InstancedMesh trong src/forest.mjs với trợ giúp OpenAI Codex; không thêm asset bên ngoài. Sites skill dùng để hướng dẫn xử lý repo/asset; không dùng dịch vụ hosting Sites. Video do người học tự quay, chưa dùng AI tạo bằng chứng.
+
+- FFmpeg: công cụ nén bản video do người học quay để lưu trong repo; giữ nguyên thời lượng. Chỉ dùng local, không phân phối binary FFmpeg trong game.

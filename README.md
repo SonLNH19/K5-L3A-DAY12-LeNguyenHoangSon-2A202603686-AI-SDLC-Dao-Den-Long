@@ -1,8 +1,7 @@
 # Đảo Đèn Lồng · v1.0.0 — Bình minh
 
-**Video demo:** [Tải video demo MP4](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/download/v1.0.0/demo.mp4). [Tải bản chơi v1.0.0](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0).
+**Video demo:** [Bản MP4 trong repo](docs/demo/demo.mp4) · [Bản gốc trên Release](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/download/v1.0.0/demo.mp4). [Tải bản chơi v1.0.0](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0).
 
-Link: https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/download/v1.0.0/demo.mp4( có thể ấn vào link này hoặc ấn vào chữ tải video ở trên)
 ![Ảnh chụp game thật: cây, đá và Mây](docs/proof/phase-4/browser/playing.png)
 
 Game 3D góc nhìn thứ ba: cùng Mây gom đom đóm, thắp sáng các Đèn Lồng Lớn và né Bóng Mực, Gió Lạc qua 3 hòn đảo (Đảo Bến, Đảo Cau, Đảo Chuông). Nhân vật, bối cảnh và đề bài là bản gốc của lab Day 12 AI SDLC.
@@ -240,4 +239,4 @@ Thêm 70 cây nhiều tầng tán, 60 đá có rêu, 45 dương xỉ, 24 nấm v
 
 Release `v1.0.0` cung cấp `dao-den-long-v1.0.0.zip`. Giải nén, mở Terminal trong thư mục có run.mjs, chạy `node run.mjs`, vào http://localhost:4173; chỉ cần Node ≥24, không cần npm install. Windows/macOS/Linux cùng một gói. Ctrl+C dừng. Mã nguồn và hướng dẫn đầy đủ vẫn ở repo.
 
-Đối chiếu yêu cầu nộp: [checklist Phase 4](docs/notes/phase-4.md), [SUBMISSION](SUBMISSION.md), [RULES](RULES.md). **Video do chủ bài tự quay đã đính kèm Release và có link ở đầu README.** Chủ bài cần xác nhận thời lượng dưới 5 phút, nội dung theo SUBMISSION và hạn Coach quy định. Không thể khẳng định test ẩn đạt khi chưa được chạy.
+Đối chiếu yêu cầu nộp: [checklist Phase 4](docs/notes/phase-4.md), [SUBMISSION](SUBMISSION.md), [RULES](RULES.md). **Video do chủ bài tự quay có cả trên Release và tại docs/demo/demo.mp4 (55.6 MB, 361.0 giây).** Bản nén giữ nguyên thời lượng. Chủ bài cần xác nhận nội dung theo SUBMISSION và hạn Coach quy định. Không thể khẳng định test ẩn đạt khi chưa được chạy.

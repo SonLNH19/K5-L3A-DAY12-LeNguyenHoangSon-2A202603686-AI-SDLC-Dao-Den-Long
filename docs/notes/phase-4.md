@@ -13,7 +13,7 @@
 | Đồ họa rừng | src/forest.mjs, cây/đá/rêu/nấm/dương xỉ; ảnh playing.png; không vào headless/benchmark |
 | Đóng gói | scripts/package-release.mjs tạo ZIP có dist và server Node, không cần npm install khi chạy gói |
 | Tài liệu | README, CHANGELOG đủ 4 phase, CREDITS, LICENSE và RETRO |
-| Video | Người học đã đính kèm demo.mp4 vào Release v1.0.0; link ở đầu README truy cập công khai thành công. Thời lượng và nội dung cần người học xác nhận. |
+| Video | Có trên Release v1.0.0 và docs/demo/demo.mp4; link đầu README. Bản repo 55.6 MB, 361.0 giây; giữ nguyên thời lượng bản gốc. Nội dung cần người học xác nhận. |
 
 ## Kết quả thực chạy
 
@@ -40,7 +40,9 @@
 - [x] Clone sạch chạy đủ 3 lệnh README; ZIP chạy WebGL, 70 cây, không lỗi JavaScript và export bảng điểm. Repo đã xác nhận public qua GitHub API. Kết quả và SHA-256 gói nằm trong release-verification.json.
 - Tag/release: các tag phase-1…phase-3 được giữ nguyên; phase-4 và v1.0.0 dành cho commit phát hành. Xác nhận trên trang Tags/Release sau khi push; video sẽ được chủ bài đính kèm sau.
 - [x] MP4 đã gắn Release, cập nhật link đầu README; kiểm tra truy cập không đăng nhập trả HTTP 200.
-- [ ] Xác nhận video dưới 5 phút và có đủ nội dung theo SUBMISSION.
+- [ ] Video dưới 5 phút: đo được 361.0 giây.
+- [x] Bản MP4 trong repo dưới 100 MB; có cả video trên Release và link đầu README.
+- [ ] Chủ bài xác nhận đủ nội dung theo SUBMISSION.
 - [ ] Chủ bài nộp link repo public lên LMS đúng hạn Coach; không commit sản phẩm sau hạn lab.
 
 Không đánh dấu hoàn thành video hoặc toàn bộ DoD chỉ vì dự định quay. Thời điểm tag/Release là thời điểm tạo thật; không thể khôi phục thời hạn của phase cũ bằng đổi lịch sử.
