@@ -2,6 +2,7 @@
 
 **Video demo:** [Tải video demo MP4](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/download/v1.0.0/demo.mp4). [Tải bản chơi v1.0.0](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0).
 
+Link: https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/download/v1.0.0/demo.mp4( có thể ấn vào link này hoặc ấn vào chữ tải video ở trên)
 ![Ảnh chụp game thật: cây, đá và Mây](docs/proof/phase-4/browser/playing.png)
 
 Game 3D góc nhìn thứ ba: cùng Mây gom đom đóm, thắp sáng các Đèn Lồng Lớn và né Bóng Mực, Gió Lạc qua 3 hòn đảo (Đảo Bến, Đảo Cau, Đảo Chuông). Nhân vật, bối cảnh và đề bài là bản gốc của lab Day 12 AI SDLC.
