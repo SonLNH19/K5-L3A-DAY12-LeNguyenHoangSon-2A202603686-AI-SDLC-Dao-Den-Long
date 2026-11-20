@@ -8,7 +8,7 @@ import { createDemoRoute } from './demo-route.mjs';
 const dir = join(ROOT, 'docs/proof/phase-1'); mkdirSync(dir,{recursive:true});
 const checks=[];
 function run(name,args){const out=join(dir,name+'.jsonl');const r=spawnSync(process.execPath,['src/headless.mjs','--seed','19','--night','1','--ticks','650','--out',out,...args],{cwd:ROOT,encoding:'utf8'});if(r.status!==0)throw new Error(r.stderr);return readFileSync(out,'utf8');}
-const tests=spawnSync(process.execPath,['--test','tests/game.test.mjs','tests/headless.test.mjs'],{cwd:ROOT,encoding:'utf8'});
+const tests=spawnSync(process.execPath,['--test','--test-reporter=tap','tests/game.test.mjs','tests/headless.test.mjs'],{cwd:ROOT,encoding:'utf8'});
 writeFileSync(join(dir,'tests.tap'),tests.stdout+tests.stderr);if(tests.status!==0)throw new Error('Test thất bại, xem tests.tap');
 for(const [name,args,expected]of [
   ['pickup',['--scenario','tests/scenarios/pickup.json'],'playing'],

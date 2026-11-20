@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-11-20T08:31:55.143Z",
+  "platform": "win32",
+  "arch": "x64",
+  "os_release": "10.0.26300",
+  "cpu": "13th Gen Intel(R) Core(TM) i5-13500HX",
+  "node": "v26.13.1",
+  "base_commit": "4b6b7a0facc2ea4d8f93f4b84b2bd3cfc395f01f",
+  "working_tree_note": "Bằng chứng của working tree lúc chạy; cần commit code và bằng chứng cùng nhau trước tag.",
+  "checks": [
+    {
+      "name": "pickup",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 10
+      }
+    },
+    {
+      "name": "win",
+      "expected": "won",
+      "end": {
+        "type": "end",
+        "ticks": 1,
+        "state": "won",
+        "score": 368
+      }
+    },
+    {
+      "name": "lose",
+      "expected": "lost",
+      "end": {
+        "type": "end",
+        "ticks": 1,
+        "state": "lost",
+        "score": 0
+      }
+    },
+    {
+      "name": "full-default-run",
+      "expected": "won",
+      "end": {
+        "type": "end",
+        "ticks": 1845,
+        "state": "won",
+        "score": 1808
+      }
+    }
+  ],
+  "determinism": {
+    "identical": true,
+    "sha256": "d7fd9ab43ff4b2f8731e7beb2a6250ead5bb7010cd1bef87866dbc56f9028f18"
+  },
+  "limits": [
+    "Không chứng minh test ẩn của giảng viên đạt.",
+    "Nền tảng khác chỉ được xác nhận bằng job CI tương ứng hoặc chạy thật.",
+    "Ảnh và kiểm tra GUI nằm trong bộ browser test riêng."
+  ]
+}

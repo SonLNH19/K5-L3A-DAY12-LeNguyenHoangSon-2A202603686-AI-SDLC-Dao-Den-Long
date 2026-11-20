@@ -1,103 +1,113 @@
-# Day 12 — AI SDLC: Đảo Đèn Lồng
+# Đảo Đèn Lồng · Phase 1
 
-> **Cá nhân** (1 người / 1 MSSV) · Áp dụng SDLC cùng AI để xây một **game 3D** qua **4 phase**, từ yêu cầu ban đầu tới bản phát hành.
-> **Lab board + trợ giảng:** **[Đảo Đèn Lồng Lab](https://claude.ai/artifact/Q1RYyv1dxjUczzCbd2ZnoW)**
+**Video demo:** chưa quay; sẽ thêm link video `.mp4` trước bàn giao cuối. [Ảnh và bằng chứng Phase 1](docs/proof/phase-1/).
 
----
+Game 3D góc nhìn thứ ba: cùng Mây gom đom đóm, thắp 5 Đèn Lồng Lớn và xua Bóng Mực trên Đảo Bến. Nhân vật, bối cảnh và đề bài là bản gốc của lab Day 12 AI SDLC.
 
-## Tài liệu của lab
+**Phạm vi hiện tại:** PRD-0 và Test Contract v1.0. Chưa triển khai Ticket-02/03/04, chưa tạo Release cuối `v1.0.0`. [Hướng dẫn chi tiết từng bước, kể cả kiểm tra Linux/macOS](docs/HUONG-DAN.md).
 
-| File | Nội dung |
+## Cài và chơi trong 3 lệnh
+
+Cần Node.js 24 LTS hoặc mới hơn, npm và trình duyệt hỗ trợ WebGL2. Đã chạy local bằng Node.js 26 trên Windows. Cài thư viện lần đầu cần mạng; khi chơi không tải CDN, font hay asset bên ngoài.
+
+Từ thư mục repo đã clone:
+
+```bash
+npm ci
+npm run build
+npm start
+```
+
+Mở **http://localhost:4173**. Giữ terminal mở; Ctrl+C để dừng. Trên Windows PowerShell, dùng `npm.cmd` thay `npm` nếu bị chặn script. `start` cũng tự build, nên lúc phát triển có thể bỏ lệnh build ở giữa.
+
+Bản web tĩnh nằm ở `dist/`, có thể phục vụ bằng HTTP static server; không nhấp đúp file index.html.
+
+## Điều khiển và luật chơi
+
+| Phím | Hành động |
 |---|---|
-| [GUIDE.md](GUIDE.md) | Hướng dẫn làm lab: vòng làm việc mỗi phase, harness, kiểm chứng, token |
-| [CHECKPOINTS.md](CHECKPOINTS.md) | Các mốc tự kiểm tra từ chuẩn bị đến nộp bài |
-| [SUBMISSION.md](SUBMISSION.md) | Đặt tên repo, hạn nộp, tag, Release, video, checklist |
-| [RULES.md](RULES.md) | Quy định: AI, trung thực về bằng chứng, bản quyền, bảo mật |
-| [RUBRIC.md](RUBRIC.md) | Thang điểm chi tiết |
+| WASD hoặc mũi tên | Di chuyển theo camera |
+| Space | Nhảy |
+| E | Nạp đom đóm vào đèn chưa sáng gần nhất |
+| F | Tỏa sáng, tiêu hao 2 đom đóm đang mang |
+| Q / R hoặc kéo chuột phải | Xoay camera |
+| H / Esc | Hướng dẫn, tạm dừng hoặc tiếp tục |
 
-## Lab board
+- Tự nhặt đom đóm trong 1,8m, tối đa 15 con. Mỗi đèn cần 8 con; nạp một lần tối đa phần còn thiếu khi trong 3m.
+- Bóng Mực đuổi với tốc độ 2,4m/s; chạm trong 1,1m mất 1 máu. Mây có 3 máu và bất tử 2 giây sau mỗi lần trúng, không rơi đom đóm.
+- Tỏa sáng trong 8m làm choáng 3 giây, đẩy 5m; cooldown 1 giây. Nhấn theo cạnh: giữ E/F/Space không tự lặp hành động.
+- Đèn đã sáng có vùng an toàn 6m. Tỏa sáng vẫn tiêu hao nếu không có Bóng Mực trong vùng.
+- Thắp đủ 5 đèn thì thắng. Hết máu hoặc hết 300 giây thì thua. Có thể chơi lại sau cả hai kết quả.
+- Mây bị giữ tại mép đảo nên `fall_enabled=false`; không có sát thương rơi. Nhảy không giúp tránh sát thương vì contract đo khoảng cách ngang XZ.
 
-Yêu cầu dự án được phát hành tại **[Đảo Đèn Lồng Lab](https://claude.ai/artifact/Q1RYyv1dxjUczzCbd2ZnoW)**. Mỗi phase là một tab (tab chưa phát hành bị khóa), mỗi tab có trợ giảng AI riêng chỉ trả lời trong phạm vi phase đó. Trợ giảng cần đăng nhập claude.ai và dùng lượt Claude của bạn.
+## Điểm số và giả định
 
-## Dự án
+- Nhặt 1 đom đóm: +10; thắp 1 đèn: +100; mỗi Bóng Mực bị pulse tác động: +15, kể cả làm choáng lại sau cooldown.
+- Chỉ khi thắng: cộng `floor(time_left_s) × 2 + flames × 50`. Khi thua không cộng thưởng cuối.
+- Scenario đặt sẵn trạng thái không phát sự kiện hay cộng điểm.
+- Thứ tự mỗi tick: di chuyển/nhảy → nhặt → nạp đèn → pulse → sinh định kỳ → Bóng Mực di chuyển/gây sát thương → giảm giờ → xét kết thúc. Khi đồng thời kết thúc, ưu tiên đủ đèn, sau đó hết máu, rồi bình minh.
+- Đảo bán kính 40m, tốc độ người chơi 7m/s; 95 đom đóm ban đầu, bổ sung một con mỗi 3 giây khi thiếu; 2 Bóng Mực ban đầu, thêm một con mỗi 10 giây, tối đa 8. Các số này là lựa chọn triển khai, không phải PRD quy định.
+- Thời gian scenario override là thời gian còn lại ở tick 0; sau k bước giảm k/60. Biên bán kính tính `<=` với sai số số thực cực nhỏ.
+- [Yêu cầu, giả định và nhật ký](docs/notes/phase-1.md), [PRD-0 gốc người học cung cấp](docs/requirements/PRD-0.txt).
 
-**Đảo Đèn Lồng**: game 3D góc nhìn thứ ba. Mây, người giữ đèn nhỏ tuổi, gom đom đóm để thắp lại các Đèn Lồng Lớn và né Bóng Mực trong sương đen.
+## Kiểm chứng
 
-- Không ràng buộc công nghệ; chạy được trên macOS hoặc Linux.
-- Tuân theo **Test Contract** (chế độ headless) để được chấm tự động và so sánh với nhau.
+```bash
+npm run verify
+npm run test:browser
+npm run proof
+```
 
-| Phase | Bạn nhận | Nộp |
-|---|---|---|
-| 1 | **PRD-0** (mô tả tổng quát) + Test Contract | tag `phase-1` |
-| 2 | **Ticket-02**, phát hành khi Phase 1 kết thúc | tag `phase-2` |
-| 3 | **Ticket-03**, phát hành khi Phase 2 kết thúc | tag `phase-3` |
-| 4 | **Ticket-04**, phát hành khi Phase 3 kết thúc | tag `phase-4` + Release `v1.0.0` |
+`verify` kiểm tra cú pháp, test logic/headless và build; dừng khi có lỗi. `test:browser` cần Chrome/Edge trên Windows hoặc Chromium của Playwright (`npx playwright install --with-deps chromium` trên Linux/macOS). `proof` tạo JSONL, báo cáo môi trường, kết quả test, so sánh tính tất định và lượt thắng từ thế giới mặc định.
 
-Yêu cầu sẽ được bổ sung và có thể thay đổi giữa các phase, giống dự án thật.
+Test headless không cần cửa sổ/GPU. Test browser có kiểm tra dựng hình WebGL và thao tác thực; không thay thế kiểm tra GPU/Safari trên máy Mac thật.
 
-### Lịch 4 giờ
+## Headless · Test Contract v1.0
 
-Bài lab kéo dài **4 giờ**. Phase 1 và 2 khoảng **1 giờ**, Phase 3 khoảng **30 phút**, Phase 4 khoảng **1 giờ 30 phút**. Mỗi phase phát hành đúng mốc giờ. Phase mới xuất hiện trên lab board khi tới mốc.
+```bash
+node src/headless.mjs --seed 19 --night 1 --ticks 600 --out output.jsonl
+```
 
-| Mốc | Sự kiện | Hạn tag |
-|---|---|---|
-| 0h | Phát hành **Phase 1** (PRD-0), gồm cả phần chuẩn bị | `phase-1` trước mốc 1h |
-| 1h | Phát hành **Phase 2** | `phase-2` trước mốc 2h |
-| 2h | Phát hành **Phase 3** | `phase-3` trước mốc 2h30 |
-| 2h30 | Phát hành **Phase 4** | `phase-4`, Release `v1.0.0` và video trước mốc 4h |
-| 4h | Hết giờ lab, chốt bài | |
+Ví dụ kiểm tra thắp đèn cuối và thắng:
 
-Hết giờ mỗi phase thì tag và chuyển sang phase tiếp theo, dù phase chưa hoàn hảo. Chỗ chưa xong ghi trung thực trong bằng chứng.
+```bash
+node src/headless.mjs --seed 19 --night 1 --scenario tests/scenarios/win.json --inputs tests/scenarios/win.inputs.json --ticks 600 --out output.jsonl --snapshot-every 1
+```
 
----
+Tái lập lượt thắng đầy đủ, không dùng scenario override (chạy `npm run proof` trước để tạo inputs):
 
-## Gợi ý SDLC (cách làm là của bạn)
+```bash
+node src/headless.mjs --seed 12 --night 1 --inputs docs/proof/phase-1/full-run.inputs.json --ticks 18000 --out output.jsonl
+```
 
-Mỗi phase là một vòng nhỏ. Công cụ, thứ tự, định dạng tài liệu đều tự do; đây chỉ là gợi ý:
+- 60 tick/giây cố định, chạy nhanh nhất có thể; snapshot tick 0 trước input, sau đó mặc định mỗi 10 tick; dòng `end` luôn cuối.
+- `--ticks 0` chỉ dựng trạng thái và ghi snapshot/end. Dừng sớm nếu thắng/thua.
+- Input mặc định đứng yên; trường vắng mặt giữ giá trị cũ; tick frame tăng nghiêm ngặt.
+- Thành công thoát 0; inputs/scenario sai định dạng thoát 2, lỗi khác thoát 1; thông báo lỗi ra stderr.
+- `game.contract.json` là nguồn tuning duy nhất cho cả browser và headless. Cùng seed, scenario và inputs cho output giống hệt giữa hai lần chạy.
 
-1. **Requirements:** biến yêu cầu thành tiêu chí nghiệm thu kiểm chứng được. Chỗ mơ hồ thì tự giả định và ghi lại.
-2. **Plan:** nghĩ cách kiểm chứng **trước** khi để agent viết code.
-3. **Build:** để agent viết, bạn điều phối và review.
-4. **Verify:** chạy thật, kiểm tra hành vi thật. *Không có bằng chứng thì chưa xong*: "agent bảo chạy rồi" không phải bằng chứng.
-5. **Evaluate:** cái gì đạt, AI sai ở đâu, harness (AGENTS.md, skill, hook) cần chỉnh gì.
-6. **Release:** gắn tag.
+## Kiểm tra Windows, Linux và macOS
 
-## Ba điều cần nhớ
+Workflow [.github/workflows/verify.yml](.github/workflows/verify.yml) chạy test/contract/build trên ba hệ điều hành và browser trên Ubuntu/macOS. Sau push, mở tab **Actions** để xem từng job và tải artifact bằng chứng.
 
-> Bạn được **tự do sáng tạo thêm** quanh phần lõi (nhân vật, cơ chế nhỏ, câu chuyện, hiệu ứng, âm thanh…). Sáng tạo gọn và không phá yêu cầu được tính điểm trong hạng mục F của [RUBRIC](RUBRIC.md); ghi mục "Sáng tạo của tôi" trong README của bạn.
+**Không coi việc có workflow là bằng chứng đã chạy xanh.** Trạng thái thực tế của lần triển khai xem [đánh giá Phase 1](docs/notes/evaluation-phase-1.md). [Hướng dẫn chạy trên máy thật, WSL và đọc CI](docs/HUONG-DAN.md).
 
-- **Game tốt là game đúng yêu cầu của khách hàng**, không phải game phức tạp hay đẹp nhất. Làm đúng và chứng minh được là đúng trước, trau chuốt sau.
-- **Cân nhắc kỹ quota token của bạn.** Đốt nhiều token không làm bài tốt hơn. Ngữ cảnh gọn, kế hoạch rõ, kiểm chứng sớm thường vừa rẻ vừa đúng hơn chạy agent liên tục.
-- **Kiểm chứng là phần quan trọng nhất.** Bằng chứng (test, output headless, ảnh, số đo) đáng giá hơn lời mô tả.
+## Sáng tạo của tôi
 
----
+Đảo low-poly, đường đá dẫn tới năm đèn, nón lá có đèn nhỏ, đom đóm lung linh, vòng sáng an toàn, bản đồ vị trí và âm thanh tổng hợp theo sự kiện. Trang trí chỉ nằm ở renderer, không thêm thực thể vào headless. Các test tính tất định và cơ chế lõi là bằng chứng kiểm tra phần cũ; ảnh thực tế ở docs/proof/phase-1/browser/.
 
-## Bàn giao cuối cùng
+## Cấu trúc và tài liệu lab
 
-Một **repo GitHub cá nhân, public**, gồm:
-
-1. **Toàn bộ mã nguồn** của game qua 4 phase, tag `phase-1` … `phase-4`, Release `v1.0.0`.
-2. **Video demo `.mp4` dưới 5 phút** (đính kèm Release `v1.0.0` hoặc `docs/demo/demo.mp4`, link ở đầu README): chơi thử và cho thấy bằng chứng game chạy đúng.
-3. **Bằng chứng kiểm chứng** của từng phase (định dạng tự chọn).
-4. **Harness AI đã dùng** (AGENTS.md / CLAUDE.md, skills, hooks, plugins…), giữ nguyên trong repo và lịch sử git.
-5. **Ghi chép ngắn:** spec/giả định mỗi phase, nhật ký dùng AI (gồm token/chi phí ước tính), retro.
-
-Không commit API key, token hay `.env`. Gửi link repo theo hướng dẫn của Coach.
-
-## Đánh giá (100 điểm)
-
-| Hạng mục | Điểm |
+| Đường dẫn | Vai trò |
 |---|---|
-| Test tự động ẩn (headless, gồm kiểm tra lại phase trước) | 30 |
-| Kiểm chứng & bằng chứng của bạn | 20 |
-| Quy trình SDLC & harness AI | 15 |
-| Evaluation & retro (gồm cách bạn dùng token) | 10 |
-| Hiệu năng & ổn định | 10 |
-| Chất lượng sản phẩm (đúng yêu cầu, chơi được) | 10 |
-| Video demo | 5 |
+| src/game.mjs | Một lõi logic cho cả giao diện và headless |
+| src/app.mjs | Hiển thị 3D, bàn phím, HUD, âm thanh |
+| src/headless.mjs, src/validation.mjs | CLI, dữ liệu input/scenario, JSONL |
+| tests/, scripts/ | Test, scenario, build, server, harness kiểm chứng |
+| AGENTS.md | Hướng dẫn agent đã dùng và giữ trong repo |
+| docs/notes/, docs/proof/ | Giả định, đánh giá, nhật ký AI và bằng chứng |
+| docs/lab/README-original.md | README đề bài trước khi bổ sung README sản phẩm |
 
-## Quy định
+[GUIDE](GUIDE.md) · [CHECKPOINTS](CHECKPOINTS.md) · [RULES](RULES.md) · [RUBRIC](RUBRIC.md) · [SUBMISSION](SUBMISSION.md)
 
-- Dùng AI thoải mái; không sao chép repo của người khác.
-- Bằng chứng phải thật: test luôn đạt hay output sửa tay là vi phạm.
-- Nhân vật, bối cảnh là bản gốc của lab; asset bên ngoài chỉ dùng loại CC0/CC-BY/MIT hoặc tự tạo, ghi nguồn trong `CREDITS.md`.
+[CREDITS](CREDITS.md) · [LICENSE](LICENSE). Không commit `.env`, token, API key. Không dùng bằng chứng sửa tay hoặc gắn tag cho phase chưa hoàn thành.

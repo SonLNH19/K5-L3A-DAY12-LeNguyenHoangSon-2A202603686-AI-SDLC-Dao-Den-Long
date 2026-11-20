@@ -1,0 +1,11 @@
+{
+  "platform": "win32",
+  "gl": {
+    "webgl": true,
+    "calls": 468,
+    "triangles": 15588,
+    "state": "playing"
+  },
+  "page_errors": [],
+  "scope": "Chromium software WebGL; real macOS graphics not verified"
+}
