@@ -18,7 +18,66 @@ npm run build
 npm start
 ```
 
-Mở **http://localhost:4173**. Trên Windows PowerShell, dùng `npm.cmd` thay `npm` nếu bị chặn script (`$env:Path += ';D:\nodejs'`).
+Mở **http://localhost:4173**. Trên Windows PowerShell, dùng `npm.cmd` thay `npm` nếu bị chặn script.
+
+## Hướng dẫn chạy trên Windows
+
+### Chuẩn bị
+
+1. Cài **Node.js từ phiên bản 24 trở lên**, kèm npm. Trong bộ cài, giữ lựa chọn **npm package manager** và **Add to PATH**, rồi hoàn tất cài đặt.
+2. Đóng và mở lại PowerShell; nếu dùng Terminal trong VS Code thì mở lại VS Code. Kiểm tra:
+
+```powershell
+node --version
+npm.cmd --version
+```
+
+Node cần hiện `v24...` hoặc mới hơn. Dùng Chrome hoặc Edge hỗ trợ WebGL2, bật tăng tốc đồ họa.
+
+### Chạy từ mã nguồn — 3 lệnh
+
+Tải/clone repo và giải nén nếu cần. Mở thư mục **chứa `package.json`** trong File Explorer, gõ `powershell` vào thanh địa chỉ rồi nhấn Enter. Chạy lần lượt:
+
+```powershell
+npm.cmd ci
+npm.cmd run build
+npm.cmd start
+```
+
+Giữ cửa sổ PowerShell mở, vào **http://localhost:4173**, nhấn **Bắt đầu chuyến đi**. Những lần chơi sau chỉ cần `npm.cmd start`. Nhấn **Ctrl+C** trong PowerShell để dừng server. Không nhấp đúp `index.html` để chơi.
+
+### Chạy gói ZIP phát hành — không cần cài thư viện
+
+Tải **dao-den-long-v1.0.0.zip** ở [Release v1.0.0](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0), chọn **Extract All / Giải nén tất cả**. Mở PowerShell trong thư mục chứa `run.mjs`, chạy:
+
+```powershell
+node run.mjs
+```
+
+Mở **http://localhost:4173**. Gói này vẫn cần Node.js ≥24 nhưng không cần `npm ci` hay build.
+
+### Kiểm tra và xử lý lỗi trên Windows
+
+Các lệnh sau chạy từ thư mục mã nguồn chứa `package.json`; bản ZIP chỉ dùng để chơi:
+
+```powershell
+npm.cmd run verify
+npm.cmd run test:browser
+node src/headless.mjs --seed 19 --night 1 --ticks 600 --out output.jsonl
+npm.cmd run bench -- --seed 42 --duration 30 --out bench.json
+npm.cmd run soak -- --seed 7 --nights 10 --out soak.json
+```
+
+Chạy lần lượt; khi benchmark, giữ cửa sổ ở trước và không chạy browser test cùng lúc.
+
+| Hiện tượng | Cách xử lý |
+|---|---|
+| `node` hoặc `npm.cmd` không được nhận diện | Cài Node.js với Add to PATH, đóng/mở lại PowerShell hoặc VS Code, kiểm tra phiên bản |
+| PowerShell báo `npm.ps1 cannot be loaded` | Dùng `npm.cmd` như hướng dẫn; không cần đổi Execution Policy |
+| Không tìm thấy `package.json` | Chuyển vào đúng thư mục mã nguồn trước khi chạy npm |
+| Cổng 4173 đang dùng | Dừng server cũ bằng Ctrl+C; hoặc chạy `$env:PORT='4174'; npm.cmd start` và mở http://localhost:4174. Với ZIP dùng `node run.mjs` thay `npm.cmd start` |
+| Trang trắng hoặc lỗi WebGL | Bật tăng tốc đồ họa trong Chrome/Edge, cập nhật driver GPU và xem thông báo lỗi trên trang |
+| Trang còn bản cũ | Dừng server, chạy lại rồi nhấn Ctrl+Shift+R trong trình duyệt |
 
 ## Hướng dẫn chạy trên macOS và Linux
 
