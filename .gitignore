@@ -40,3 +40,8 @@ artifacts/release-extracted/
 
 # Local agent handoff
 /hướng dẫn chạy của agent trước.md
+
+# Personal walkthroughs remain local; public run instructions belong in README.
+/docs/HUONG-DAN.md
+/docs/HUONG-DAN-PHASE-3.md
+/docs/demo/HUONG-DAN-QUAY.md

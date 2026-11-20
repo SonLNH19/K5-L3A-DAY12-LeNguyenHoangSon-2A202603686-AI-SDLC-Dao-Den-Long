@@ -18,4 +18,4 @@
 
 - Phase 4: npm run bench -- --seed 42 --duration 30 --out bench.json; npm run soak -- --seed 7 --nights 10 --out soak.json. Không chạy browser test đồng thời benchmark.
 - Rừng trang trí tắt ở benchmark/headless; RNG độc lập. Giữ số đo thật, không sửa JSON để đạt ngưỡng.
-- Người học tự quay video: docs/demo/HUONG-DAN-QUAY.md. Không tạo hoặc đánh dấu video hoàn thành thay người học.
+- Người học tự quay video. Hướng dẫn thao tác riêng giữ local, không commit/push. Không tạo hoặc đánh dấu video hoàn thành thay người học.

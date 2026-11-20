@@ -12,7 +12,7 @@
 | Chỉ báo/accessibility | Cảnh báo xuất hiện + hướng, gió, 10s, dầu thấp; reduced motion, 18px và ×1.25, màu dễ phân biệt |
 | Đồ họa rừng | src/forest.mjs, cây/đá/rêu/nấm/dương xỉ; ảnh playing.png; không vào headless/benchmark |
 | Đóng gói | scripts/package-release.mjs tạo ZIP có dist và server Node, không cần npm install khi chạy gói |
-| Tài liệu | README, CHANGELOG đủ 4 phase, CREDITS, LICENSE, RETRO và hướng dẫn tự quay |
+| Tài liệu | README, CHANGELOG đủ 4 phase, CREDITS, LICENSE và RETRO |
 | Video | **Người học sẽ tự quay và bổ sung trước khi nộp**; chưa có MP4 nên chưa đủ DoD toàn bộ |
 
 ## Kết quả thực chạy

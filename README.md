@@ -1,6 +1,6 @@
 # Đảo Đèn Lồng · v1.0.0 — Bình minh
 
-**Video demo:** chủ bài tự quay, chưa hoàn thành. [Kịch bản và cách quay/nộp MP4 dưới 5 phút](docs/demo/HUONG-DAN-QUAY.md). [Tải bản chơi v1.0.0](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0).
+**Video demo:** sẽ bổ sung video MP4 dưới 5 phút trước khi nộp. [Tải bản chơi v1.0.0](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0).
 
 ![Ảnh chụp game thật: cây, đá và Mây](docs/proof/phase-4/browser/playing.png)
 
