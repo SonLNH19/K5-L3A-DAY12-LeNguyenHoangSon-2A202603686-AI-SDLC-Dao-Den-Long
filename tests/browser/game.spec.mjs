@@ -24,7 +24,12 @@ test('3D renders without JS errors; start, keyboard, jump, dash, pause and respo
 
   // Test movement WASD
   await page.keyboard.down('KeyW');
-  await page.waitForTimeout(600);
+  // Wait for real motion before releasing the key. Software WebGL can stall
+  // rendered frames during shader compilation; a fixed 600ms tap can be lost.
+  await expect.poll(() => page.evaluate(() => window.__qa.game.player.pos[2]), {
+    timeout: process.env.CI ? 60000 : 10000,
+    intervals: [100, 250, 500]
+  }).toBeLessThan(before.player.pos[2] - 0.4);
   await page.keyboard.up('KeyW');
   const after = await page.evaluate(() => window.__qa.game.snapshot());
   expect(after.player.pos[2]).toBeLessThan(before.player.pos[2] - 0.4);
