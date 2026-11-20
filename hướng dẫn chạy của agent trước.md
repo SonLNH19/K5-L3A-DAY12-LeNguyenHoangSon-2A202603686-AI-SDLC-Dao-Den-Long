@@ -576,6 +576,7 @@ Ghi nhận 20/11/2026 (GMT+7). Phần này cập nhật trạng thái mới nh�
 - Không skip test. Các kỳ vọng +10/deposit, all_lit early-win và thưởng thời gian được thay có comment và giải trình ADR/changelog.
 - Bằng chứng mới: docs/proof/phase-3/. Không sửa hoặc ghi đè proof/phase-1 và proof/phase-2.
 - Có JSONL relight/refuel/drain/dawn/no-early-win và scenario hồi quy cũ; tất định cho ba Đêm và tình huống refuel; source-hashes.json và report.json.
+- Đã clone sạch commit 5a50347 vào .qa/phase3-clean trên Windows, chạy npm ci, verify và proof đạt; bản sao báo cáo thực tế ở docs/proof/phase-3/clean-clone-report.json.
 - Lượt mặc định seed4 thắng đúng tick14400 (240s), 1169 điểm, còn3 đèn và3 máu. Bot dùng input thật, không scenario override/state edit. Bot không thắng mọi seed; seed4 được chọn công khai sau thử một số seed, không nhận là người học chơi.
 - Benchmark Phase 3 là đủ18000 tick của Đêm3 mới, scenario không nguy hiểm/không gió để tránh dừng sớm; khoảng0.07s local, số mới nhất trong report.json. Không nhận là benchmark21600tick hoặc FPS/GPU.
 - Browser test nhảy chuyển từ sleep cố định sang polling trạng thái thật; vẫn kiểm tra nhấn phím thật. Các lần test thất bại trước đó được sửa, lần cuối cả5 đạt với exit0.

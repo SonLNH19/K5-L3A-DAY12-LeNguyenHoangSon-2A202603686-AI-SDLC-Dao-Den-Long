@@ -14,6 +14,7 @@ Windows, Node.js v26.13.1, Chrome qua Playwright với software WebGL. Chỉ ghi
 | Lượt mặc định | Seed 4, input thật, không scenario override/state edit, won ở tick 14400, 240s, 1169 điểm; full-run.* |
 | Benchmark headless Đêm 3 hiện tại | Chạy đủ 18000 tick, scenario không nguy hiểm/không gió, khoảng 0.073s ở lần đo đầu; kết quả mới nhất trong report.json |
 | Bản build web | npm run build đạt |
+| Clone sạch trên Windows | Clone local commit 5a50347 vào .qa/phase3-clean, npm ci từ cache, verify và proof đều đạt; clean-clone-report.json ghi commit và môi trường thực tế |
 | Linux/macOS và test ẩn | Chưa xác nhận; cần job CI/máy tương ứng và test ẩn giảng viên |
 
 Ảnh trong browser/ là ảnh chạy thật. Các ảnh scenario và lượt bot không thay video người học chơi. Benchmark không đo FPS, không so sánh được như một lượt chơi có đủ nguy hiểm; số bước thực tế được kiểm tra để không nhầm chết sớm là chạy đủ Đêm.
