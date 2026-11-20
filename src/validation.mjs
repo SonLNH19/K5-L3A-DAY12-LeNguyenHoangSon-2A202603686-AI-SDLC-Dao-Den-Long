@@ -9,6 +9,7 @@ const position = (v, name) => {
   v.forEach(n => number(n, name));
 };
 const boolean = (v, name) => { if (typeof v !== 'boolean') fail(`${name}: phải là boolean`); };
+
 export function validateInputs(value) {
   object(value, 'inputs');
   if (!Array.isArray(value.frames)) fail('inputs.frames: phải là mảng');
@@ -22,19 +23,26 @@ export function validateInputs(value) {
       f.move.forEach(n => number(n, 'move', -1, 1));
     }
     if ('cam_yaw_deg' in f) number(f.cam_yaw_deg, 'cam_yaw_deg');
-    for (const key of ['jump', 'interact', 'pulse', 'dash']) if (key in f) boolean(f[key], key);
+    for (const key of ['jump', 'interact', 'pulse', 'dash', 'pause']) if (key in f) boolean(f[key], key);
   }
   return value;
 }
+
 export function validateScenario(s, tuning) {
   object(s, 'scenario');
+  if ('night' in s) number(s.night, 'night', 1, 3, true);
   if ('player' in s) {
     object(s.player, 'player');
     if ('pos' in s.player) position(s.player.pos, 'player.pos');
     if ('carried' in s.player) number(s.player.carried, 'carried', 0, tuning.carry_capacity, true);
     if ('flames' in s.player) number(s.player.flames, 'flames', 0, Infinity, true);
+    for (const k of ['invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) {
+      if (k in s.player) number(s.player[k], `player.${k}`, 0, Infinity, true);
+    }
   }
-  for (const key of ['random_motes', 'random_shades']) if (key in s) boolean(s[key], key);
+  for (const key of ['random_motes', 'random_shades', 'random_drifters', 'wind_enabled']) {
+    if (key in s) boolean(s[key], key);
+  }
   if ('time_left_s' in s) number(s.time_left_s, 'time_left_s', 0);
   if ('motes' in s) {
     if (!Array.isArray(s.motes)) fail('motes: phải là mảng');
@@ -43,12 +51,42 @@ export function validateScenario(s, tuning) {
   if ('shades' in s) {
     if (!Array.isArray(s.shades)) fail('shades: phải là mảng');
     const ids = new Set();
+    const validStates = new Set(['spawning', 'wander', 'chase', 'recoil', 'stunned']);
     for (const shade of s.shades) {
       object(shade, 'shade'); position(shade.pos, 'shade.pos');
       if ('id' in shade) {
         if (typeof shade.id !== 'string' || !shade.id || ids.has(shade.id)) fail('shade.id: phải là chuỗi không rỗng và duy nhất');
         ids.add(shade.id);
       }
+      if ('state' in shade && !validStates.has(shade.state)) fail(`shade.state: không hợp lệ (${shade.state})`);
+      if ('state_ticks_left' in shade) number(shade.state_ticks_left, 'shade.state_ticks_left', 0, Infinity, true);
+    }
+  }
+  if ('drifters' in s) {
+    if (!Array.isArray(s.drifters)) fail('drifters: phải là mảng');
+    const ids = new Set();
+    const validStates = new Set(['idle', 'chase', 'flee']);
+    for (const d of s.drifters) {
+      object(d, 'drifter'); position(d.pos, 'drifter.pos');
+      if ('id' in d) {
+        if (typeof d.id !== 'string' || !d.id || ids.has(d.id)) fail('drifter.id: phải là chuỗi không rỗng và duy nhất');
+        ids.add(d.id);
+      }
+      if ('state' in d && !validStates.has(d.state)) fail(`drifter.state: không hợp lệ (${d.state})`);
+      if ('stolen' in d) number(d.stolen, 'drifter.stolen', 0, tuning.carry_capacity, true);
+    }
+  }
+  if ('charms' in s) {
+    if (!Array.isArray(s.charms)) fail('charms: phải là mảng');
+    const ids = new Set();
+    for (const c of s.charms) {
+      object(c, 'charm');
+      if ('id' in c) {
+        if (typeof c.id !== 'string' || !c.id || ids.has(c.id)) fail('charm.id: phải là chuỗi không rỗng và duy nhất');
+        ids.add(c.id);
+      }
+      if ('available' in c) boolean(c.available, 'charm.available');
+      if ('respawn_ticks' in c) number(c.respawn_ticks, 'charm.respawn_ticks', 0, Infinity, true);
     }
   }
   if ('lanterns' in s) {
@@ -56,7 +94,7 @@ export function validateScenario(s, tuning) {
     const ids = new Set();
     for (const l of s.lanterns) {
       object(l, 'lantern');
-      if (!/^L[1-5]$/.test(l.id) || ids.has(l.id)) fail('lantern.id: cần L1…L5, không trùng');
+      if (!/^L[1-7]$/.test(l.id) || ids.has(l.id)) fail('lantern.id: cần L1…L7, không trùng');
       ids.add(l.id);
       if ('pos' in l) position(l.pos, 'lantern.pos');
       if ('deposited' in l) number(l.deposited, 'deposited', 0, tuning.lantern_cost, true);

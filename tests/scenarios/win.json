@@ -3,7 +3,7 @@
   "random_shades": false,
   "motes": [],
   "shades": [],
-  "player": { "pos": [0, 0, 0], "carried": 8, "flames": 3 },
+  "player": { "pos": [0, 0, 0], "carried": 10, "flames": 3 },
   "lanterns": [
     { "id": "L1", "pos": [0, 0, 1], "deposited": 0 },
     { "id": "L2", "lit": true },

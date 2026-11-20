@@ -1,0 +1,9 @@
+{
+  "night": 2,
+  "random_motes": false,
+  "random_shades": false,
+  "motes": [],
+  "shades": [],
+  "drifters": [{ "id": "D1", "pos": [0, 0, 1.0], "state": "idle", "stolen": 0 }],
+  "player": { "pos": [0, 0, 0], "carried": 6, "flames": 3 }
+}
