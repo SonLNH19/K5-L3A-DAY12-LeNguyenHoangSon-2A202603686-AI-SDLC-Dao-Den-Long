@@ -1,0 +1,11 @@
+{
+  "platform": "win32",
+  "gl": {
+    "webgl": true,
+    "calls": 65,
+    "triangles": 3376,
+    "state": "playing"
+  },
+  "page_errors": [],
+  "scope": "Phase 2 WebGL renderer"
+}

@@ -1,0 +1,226 @@
+{
+  "seed": 12,
+  "end": {
+    "type": "end",
+    "ticks": 11837,
+    "state": "won",
+    "score": 1269
+  },
+  "seconds": 197.28333333333333,
+  "snapshot": {
+    "type": "snapshot",
+    "tick": 11837,
+    "sim_tick": 11837,
+    "night": 1,
+    "state": "won",
+    "time_left_s": 102.717,
+    "score": 1269,
+    "wind": {
+      "active": false,
+      "dir_deg": 0
+    },
+    "player": {
+      "pos": [
+        12.884,
+        0,
+        -20.917
+      ],
+      "vel": [
+        0,
+        0,
+        0
+      ],
+      "grounded": true,
+      "flames": 1,
+      "carried": 0,
+      "invuln": false,
+      "dash_cd_s": 0.017,
+      "pulse_cd_s": 0,
+      "charm_s": 0
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "pos": [
+          0,
+          0,
+          25
+        ],
+        "lit": true,
+        "deposited": 10
+      },
+      {
+        "id": "L2",
+        "pos": [
+          23.8,
+          0,
+          7.7
+        ],
+        "lit": true,
+        "deposited": 10
+      },
+      {
+        "id": "L3",
+        "pos": [
+          14.7,
+          0,
+          -20.2
+        ],
+        "lit": true,
+        "deposited": 10
+      },
+      {
+        "id": "L4",
+        "pos": [
+          -14.7,
+          0,
+          -20.2
+        ],
+        "lit": true,
+        "deposited": 10
+      },
+      {
+        "id": "L5",
+        "pos": [
+          -23.8,
+          0,
+          7.7
+        ],
+        "lit": true,
+        "deposited": 10
+      }
+    ],
+    "shades": [
+      {
+        "id": "S1",
+        "pos": [
+          10.954,
+          0,
+          -41.521
+        ],
+        "state": "wander"
+      },
+      {
+        "id": "S2",
+        "pos": [
+          10.626,
+          0,
+          -43.61
+        ],
+        "state": "wander"
+      },
+      {
+        "id": "S3",
+        "pos": [
+          10.954,
+          0,
+          -41.521
+        ],
+        "state": "wander"
+      },
+      {
+        "id": "S4",
+        "pos": [
+          10.626,
+          0,
+          -43.61
+        ],
+        "state": "wander"
+      },
+      {
+        "id": "S5",
+        "pos": [
+          -33.351,
+          0,
+          26.408
+        ],
+        "state": "wander"
+      },
+      {
+        "id": "S6",
+        "pos": [
+          -33.704,
+          0,
+          26.652
+        ],
+        "state": "wander"
+      }
+    ],
+    "motes_active": 7,
+    "motes": [
+      {
+        "id": "M27",
+        "pos": [
+          -23.335,
+          0,
+          23.335
+        ],
+        "kind": "random",
+        "ttl_s": null
+      },
+      {
+        "id": "M61",
+        "pos": [
+          30.488,
+          0,
+          -12.629
+        ],
+        "kind": "random",
+        "ttl_s": null
+      },
+      {
+        "id": "M62",
+        "pos": [
+          -23.335,
+          0,
+          -23.335
+        ],
+        "kind": "random",
+        "ttl_s": null
+      },
+      {
+        "id": "M64",
+        "pos": [
+          -30.488,
+          0,
+          12.629
+        ],
+        "kind": "random",
+        "ttl_s": null
+      },
+      {
+        "id": "M67",
+        "pos": [
+          23.335,
+          0,
+          -23.335
+        ],
+        "kind": "random",
+        "ttl_s": null
+      },
+      {
+        "id": "M68",
+        "pos": [
+          -8.485,
+          0,
+          8.485
+        ],
+        "kind": "random",
+        "ttl_s": null
+      },
+      {
+        "id": "M69",
+        "pos": [
+          -12.629,
+          0,
+          -30.488
+        ],
+        "kind": "random",
+        "ttl_s": null
+      }
+    ],
+    "drifters": [],
+    "charms": []
+  },
+  "note": "Default game; no scenario overrides or state edits. Inputs generated from observable positions."
+}

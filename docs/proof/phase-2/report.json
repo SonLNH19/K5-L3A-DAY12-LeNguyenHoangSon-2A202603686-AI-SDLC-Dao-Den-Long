@@ -1,0 +1,146 @@
+{
+  "generated_at": "2026-11-20T08:59:21.634Z",
+  "phase": "phase-2",
+  "contract_version": "1.1",
+  "platform": "win32",
+  "arch": "x64",
+  "os_release": "10.0.26300",
+  "cpu": "13th Gen Intel(R) Core(TM) i5-13500HX",
+  "node": "v26.13.1",
+  "base_commit": "ea2b3754213338c0fd02295f985d74dee4e9f42e",
+  "benchmark_21600_ticks_seconds": 0.5097022999999999,
+  "benchmark_target_seconds": 30,
+  "benchmark_passed": true,
+  "checks": [
+    {
+      "name": "pickup",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "win",
+      "expected": "won",
+      "end": {
+        "type": "end",
+        "ticks": 1,
+        "state": "won",
+        "score": 468
+      }
+    },
+    {
+      "name": "lose",
+      "expected": "lost",
+      "end": {
+        "type": "end",
+        "ticks": 1,
+        "state": "lost",
+        "score": 0
+      }
+    },
+    {
+      "name": "dash",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "wind-charm",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "jump-pad",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "stray-wind",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "fall",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "pause",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "night2",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "night3",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "full-default-run",
+      "expected": "won",
+      "end": {
+        "type": "end",
+        "ticks": 11837,
+        "state": "won",
+        "score": 1269
+      }
+    }
+  ],
+  "determinism": {
+    "identical_night1": true,
+    "identical_night2": true,
+    "identical_night3": true
+  },
+  "limits": [
+    "Không chứng minh test ẩn của giảng viên đạt.",
+    "Nền tảng khác chỉ được xác nhận bằng job CI tương ứng hoặc chạy thật.",
+    "Ảnh và kiểm tra GUI nằm trong bộ browser test riêng."
+  ]
+}
