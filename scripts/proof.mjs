@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { ROOT } from './build.mjs';
 import { createDemoRoute } from './demo-route.mjs';
 
-const dir = join(ROOT, 'docs/proof/phase-3');
+const dir = join(ROOT, 'docs/proof/phase-4');
 mkdirSync(dir, { recursive: true });
 
 const checks = [];
@@ -21,7 +21,7 @@ function run(name, extra = []) {
 
 // 1. Run unit tests and write TAP output
 console.log('Running test suite for TAP report...');
-const tests = spawnSync(process.execPath, ['--test', '--test-reporter=tap', 'tests/game.test.mjs', 'tests/headless.test.mjs', 'tests/phase3.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+const tests = spawnSync(process.execPath, ['--test', '--test-reporter=tap', 'tests/game.test.mjs', 'tests/headless.test.mjs', 'tests/phase3.test.mjs','tests/phase4.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
 writeFileSync(join(dir, 'tests.tap'), tests.stdout + tests.stderr);
 if (tests.status !== 0) throw new Error('Test thất bại, xem tests.tap');
 
@@ -103,8 +103,10 @@ console.log(`18,000 actual ticks finished in ${durationSec.toFixed(3)}s (thresho
 const git = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
 const report = {
   generated_at: new Date().toISOString(),
-  phase: 'phase-3',
-  contract_version: '1.2',
+  phase: 'phase-4',
+  contract_version: '1.3',
+  graphics_benchmark: JSON.parse(readFileSync(join(ROOT,'bench.json'),'utf8')),
+  soak: JSON.parse(readFileSync(join(ROOT,'soak.json'),'utf8')),
   platform: platform(),
   arch: arch(),
   os_release: release(),
@@ -133,6 +135,6 @@ const report = {
 };
 writeFileSync(join(dir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
 const sourceHashes={};
-for(const name of ['src/game.mjs','src/validation.mjs','src/headless.mjs','src/app.mjs','game.contract.json','scripts/proof.mjs','tests/phase3.test.mjs'])sourceHashes[name]=createHash('sha256').update(readFileSync(join(ROOT,name))).digest('hex');
+for(const name of ['src/game.mjs','src/validation.mjs','src/headless.mjs','src/app.mjs','src/forest.mjs','src/phase4.mjs','src/leaderboard.mjs','game.contract.json','scripts/proof.mjs','tests/phase3.test.mjs','tests/phase4.test.mjs'])sourceHashes[name]=createHash('sha256').update(readFileSync(join(ROOT,name))).digest('hex');
 writeFileSync(join(dir,'source-hashes.json'),JSON.stringify(sourceHashes,null,2)+'\n');
-console.log('Đã lưu bằng chứng thật Phase 3 tại docs/proof/phase-3/');
+console.log('Đã lưu bằng chứng thật Phase 4 tại docs/proof/phase-4/');

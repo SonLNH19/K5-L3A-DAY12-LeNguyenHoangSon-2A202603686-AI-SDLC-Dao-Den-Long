@@ -1,4 +1,46 @@
 [hidden] { display:none !important; }
+/* Phase 4: all readable game UI is at least 18px at the reference viewport. */
+:root { --ui-scale:1; }
+:root.large-text { --ui-scale:1.25; }
+#game-shell :is(p,span,small,kbd,label,button,input,select,th,td,blockquote,.eyebrow,.stat-label,.fuel-text,.lamp-label,.story-foot,.story-guide,.map-caption,.interaction,.controls,.skill-label,.skill-key,.subtitle,.shade-indicator,#toast,#error) { font-size:calc(18px * var(--ui-scale)) !important; }
+#game-shell h1 { font-size:calc(27px * var(--ui-scale)); }
+#game-shell :is(h2,h3) { font-size:calc(30px * var(--ui-scale)); }
+#game-shell .stat strong,#game-shell #timer { font-size:calc(24px * var(--ui-scale)); }
+.topbar { gap:16px; }
+.stats { max-width:calc(100vw - 320px); }
+.stat-label { white-space:normal; }
+.quest { width:240px; }
+.controls { left:20px !important;right:20px !important;bottom:12px !important;transform:none !important;justify-content:center;flex-wrap:wrap;gap:10px 15px !important;padding:12px !important;white-space:normal !important; }
+.controls span { display:flex;align-items:center;gap:5px; }
+.interaction { bottom:110px !important; }
+.skills-hud { bottom:110px !important; }
+.bottom-note { display:none; }
+.overlay { overflow-y:auto;align-items:flex-start !important;padding:85px 6vw 120px !important; }
+#game-shell .story-card { max-width:620px; }
+.story-guide { line-height:1.65; }
+.modal { overflow-y:auto;align-items:flex-start !important;padding:25px 12px; }
+#game-shell .modal-card { max-width:820px;width:min(94vw,820px); }
+.setting-row { margin:14px 0; }
+.setting-row input[type=checkbox] { width:22px;height:22px;accent-color:#ffd18b;vertical-align:middle; }
+.keybindings { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px; }
+.binding-row { display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px;background:#ffffff09;border-radius:6px; }
+.binding-button { color:#fff1ce;background:#233750;border:1px solid #637c88;padding:8px;border-radius:5px;min-width:55px; }
+.modal-actions { gap:15px;flex-wrap:wrap; }
+.score-input { display:flex;gap:10px;margin-top:10px;flex-wrap:wrap; }
+.score-input input { min-width:180px;flex:1;background:#142338;color:white;border:1px solid #768b95;border-radius:6px;padding:10px; }
+#score-form { padding:15px;background:#ffffff09;border-radius:8px; }
+#game-shell .board-card { max-width:1080px;width:min(96vw,1080px); }
+.table-scroll { overflow-x:auto; }
+table { width:100%;border-collapse:collapse;margin:20px 0; }
+th,td { padding:12px;text-align:left;border-bottom:1px solid #8da7b044; }
+.subtitle { position:fixed;bottom:125px;left:50%;transform:translateX(-50%);max-width:80vw;padding:10px 15px;background:#101b2fe8;color:var(--danger);border:1px solid currentColor;border-radius:6px;z-index:6;text-align:center; }
+.shade-indicator { position:fixed;transform:translate(-50%,-50%);padding:6px 9px;border-radius:6px;background:#142238ef;color:var(--danger);z-index:7;white-space:nowrap; }
+.shade-indicator span { display:inline-block; }
+.reduced-motion :is(#timer,.lamp-progress,.vignette) { animation:none !important;transition:none !important; }
+.benchmark-mode #game-shell>:not(#world):not(#error) { display:none !important; }
+@media(max-width:1400px) { .night-label { display:none; } }
+@media(max-width:900px) { .stats { max-width:none;right:20px;gap:12px;padding:12px; }.stat+.stat { padding-left:12px; }.quest { top:230px;width:210px; }.keybindings { grid-template-columns:repeat(2,minmax(0,1fr)); }.top-actions { flex-wrap:wrap;justify-content:flex-end; }.brand .eyebrow { display:none; } }
+@media(max-width:600px) { .keybindings { grid-template-columns:1fr; }.stats { top:105px;display:grid;grid-template-columns:1fr 1fr; }.stat+.stat { border:0; }.quest { top:340px;width:180px; }.quest #map { display:none; }.overlay { padding-top:25px !important; }.story-card { width:100%; }.topbar { align-items:flex-start; }.top-actions { max-width:65%; }.modal-actions button { width:100%; }.controls { max-height:135px;overflow:auto; }.subtitle { bottom:155px;width:90vw; }.skills-hud { bottom:160px; } }
 .lamp-labels { position:fixed; inset:0; pointer-events:none; z-index:2; }
 .lamp-label { position:absolute; transform:translate(-50%,-100%); min-width:100px; padding:5px 8px; border:1px solid #a8b8b755; border-radius:5px; background:#091827dc; text-align:center; font-size:.72rem; color:#ffe2ad; }
 .lamp-label[hidden], .fuel-track[hidden] { display:none; }

@@ -608,3 +608,14 @@ node src/headless.mjs --seed 4 --night 1 --inputs docs/proof/phase-3/full-run.in
 2. Push commit/tag rồi xem Actions, sửa lỗi nền tảng nếu có. Không khẳng định đã chạy test ẩn hoặc Safari/GPU Mac.
 3. Cần Ticket-04 để làm Phase 4; chưa tạo Release v1.0.0 hoặc video cuối. Không tự bịa yêu cầu.
 4. Giữ quy định bằng chứng thật, harness/lịch sử Git, bảo mật và hạn Coach. Token/chi phí chưa có thống kê xác thực.
+
+
+## 33. Phase 4 — v1.0.0 / Contract v1.3
+
+Đã thêm benchmark Chromium thực, soak cùng tiến trình, leaderboard trên đĩa và CLI export, remap 9 hành động, chỉ báo hướng/cảnh báo, giảm chuyển động/chữ lớn, rừng InstancedMesh. Gameplay Phase 3 giữ nguyên. Xem docs/notes/phase-4.md, README và docs/notes/RETRO.md cho số đo, kiểm chứng và trạng thái phát hành.
+
+Người học yêu cầu tự quay video: KHÔNG tự quay hoặc báo hoàn thành. Hướng dẫn chính xác tại docs/demo/HUONG-DAN-QUAY.md. MP4 dưới 5 phút phải gắn Release và link đầu README trước hạn Coach. Mốc tag/release không được tự sửa hoặc force push.
+
+Lưu ý benchmark dùng RAF nên vsync_off=false, peak_mem_mb=null theo ngoại lệ web. Đo riêng, không chạy browser test đồng thời; lần đo chuẩn đạt avg 167.8 / p1low 87.5 / load 1473ms trên RTX4050, xem JSON gốc. Soak dùng jitless+GC+small nursery, không đệm baseline; 10 Đêm không crash, RSS 32.84→36.71MB (~11.8%). Unit/CLI 77 test; browser 7 test. Test ẩn chưa được chạy.
+
+Các file mới: src/phase4.mjs, forest.mjs, leaderboard.mjs; scripts/bench.mjs,soak.mjs,browser-runtime.mjs,setup-browser.mjs,package-release.mjs; tests/phase4.test.mjs; docs/proof/phase-4/. Lệnh chính npm ci → npm run build → npm start. Gói ZIP chỉ node run.mjs. Nội dung này tiếp nối toàn bộ bàn giao cũ.

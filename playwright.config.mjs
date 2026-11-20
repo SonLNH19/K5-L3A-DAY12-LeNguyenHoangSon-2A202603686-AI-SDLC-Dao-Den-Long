@@ -10,5 +10,5 @@ export default defineConfig({
   expect:{timeout:process.env.CI?15000:5000},
   reporter:'list',
   use:{baseURL:'http://127.0.0.1:4173',viewport:{width:1440,height:900},navigationTimeout:process.env.CI?60000:30000,screenshot:'only-on-failure',launchOptions:{executablePath,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox']}},
-  webServer:{command:`"${process.execPath}" scripts/serve.mjs`,url:'http://127.0.0.1:4173',reuseExistingServer:!process.env.CI,timeout:30000}
+  webServer:{command:`"${process.execPath}" scripts/serve.mjs`,url:'http://127.0.0.1:4173',reuseExistingServer:!process.env.CI,timeout:30000,env:{LANTERN_DATA_DIR:process.cwd()+'/.qa/browser-data'}}
 });

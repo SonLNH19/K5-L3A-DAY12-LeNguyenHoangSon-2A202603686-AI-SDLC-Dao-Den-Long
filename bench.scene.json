@@ -1,0 +1,24 @@
+{
+  "seed": 42,
+  "duration": 30,
+  "warmup_s": 3,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "shades": 200,
+  "motes": 100,
+  "lit_lanterns": 3,
+  "fuel_frozen": true,
+  "player_pos": [
+    0,
+    0,
+    0
+  ],
+  "forest_disabled": true,
+  "camera_radius": 30,
+  "camera_y": 15,
+  "orbit_seconds": 15,
+  "errors": "",
+  "mode": "windowed-browser"
+}

@@ -20,6 +20,7 @@
       <div class="night-label" id="current-night-label"><span class="live-dot"></span> <span id="night-title-header">ĐÊM 01 / ĐẢO BẾN</span></div>
       <div class="top-actions">
         <button id="sound" class="icon-button" title="Bật hoặc tắt âm thanh" aria-pressed="false">Âm thanh: tắt</button>
+        <button id="leaderboard-btn" class="icon-button">Bảng xếp hạng</button>
         <button id="settings-btn" class="icon-button" title="Cài đặt trò chơi">Cài đặt</button>
         <button id="pause-btn" class="icon-button" title="Tạm dừng trò chơi">Tạm dừng <kbd>Esc</kbd></button>
       </div>
@@ -80,6 +81,11 @@
           <blockquote id="dialogue-text">"Mây ơi, đêm nay sương lạnh lắm. Hãy giữ chặt ngọn đèn nhỏ và đánh thức những Đèn Lồng Lớn trước khi bình minh lên nhé!" — Ông Đăng</blockquote>
         </div>
         <p id="overlay-text">Sương đen đã phủ kín hòn đảo. Cùng Mây gom những đốm sáng, đánh thức năm ngọn đèn và giữ đêm nay thật ấm.</p>
+        <form id="score-form" hidden>
+          <label for="player-name">Tên lưu điểm (3–12 ký tự A–Z, a–z, 0–9 hoặc _)</label>
+          <div class="score-input"><input id="player-name" name="name" minlength="3" maxlength="12" pattern="[A-Za-z0-9_]{3,12}" required autocomplete="nickname"><button id="save-score" class="primary-button" type="submit">Lưu điểm</button></div>
+          <p id="score-message" role="status" aria-live="polite"></p>
+        </form>
         <div id="overlay-guide" class="story-guide">
           <p><kbd>W A S D</kbd> Di chuyển · <kbd>SPACE</kbd> Nhảy · <kbd>SHIFT / J</kbd> Lướt (14 m/s)</p>
           <p><kbd>E</kbd> Nạp đèn · <kbd>F</kbd> Tỏa sáng (tốn 3 đom đóm, choáng Bóng Mực)</p>
@@ -92,6 +98,8 @@
           <button id="overlay-retry" class="secondary-button" hidden>Chơi lại Đêm này</button>
           <button id="overlay-next" class="primary-button" hidden>Đêm tiếp theo <span aria-hidden="true">✦</span></button>
           <button id="overlay-settings" class="secondary-button">Cài đặt</button>
+          <button id="overlay-leaderboard" class="secondary-button">Bảng xếp hạng</button>
+          <button id="return-menu" class="secondary-button">Về menu</button>
         </div>
         <span id="overlay-foot" class="story-foot">3 HÒN ĐẢO · MỘT HÀNH TRÌNH THẮP SÁNG</span>
       </section>
@@ -101,6 +109,8 @@
     <div id="settings-modal" class="modal" hidden>
       <div class="modal-card">
         <h3>Cài đặt trò chơi</h3>
+        <div class="setting-row"><label><input type="checkbox" id="reduce-motion"> Giảm chuyển động</label></div>
+        <div class="setting-row"><label><input type="checkbox" id="large-text"> Chữ lớn (×1.25)</label></div>
         <div class="setting-row">
           <label for="accessible-colors">Bảng màu dễ phân biệt</label>
           <input type="checkbox" id="accessible-colors">
@@ -116,11 +126,17 @@
           <span id="mouse-sens-val">5</span>
         </div>
         <div class="modal-actions">
+          <button id="reset-keys" class="secondary-button" type="button">Khôi phục mặc định</button>
           <button id="close-settings" class="primary-button">Lưu và Đóng</button>
         </div>
+        <h3>Đổi phím điều khiển</h3><p>Chọn một hành động rồi nhấn phím mới. Q/R dành cho camera.</p>
+        <div id="keybindings" class="keybindings"></div><p id="binding-message" role="status" aria-live="polite"></p>
       </div>
     </div>
 
+    <div id="leaderboard-modal" class="modal" hidden><section class="modal-card board-card" role="dialog" aria-label="Bảng xếp hạng cục bộ"><h2>Bảng xếp hạng</h2><p>Top 10 trên máy này · Điểm bằng nhau: người đạt trước đứng trên.</p><div class="table-scroll"><table><thead><tr><th>Hạng</th><th>Tên</th><th>Điểm</th><th>Đêm thắng</th><th>Thời điểm</th></tr></thead><tbody id="leaderboard-rows"></tbody></table></div><p id="leaderboard-empty">Chưa có điểm được lưu.</p><p id="leaderboard-error" role="alert"></p><button id="close-leaderboard" class="primary-button">Đóng bảng xếp hạng</button></section></div>
+    <div id="subtitle" class="subtitle" role="status" aria-live="polite" hidden></div>
+    <div id="shade-indicator" class="shade-indicator" hidden><span>▲</span> ⚠ Bóng Mực mới</div>
     <div id="lamp-labels" class="lamp-labels" aria-label="Mức dầu từng đèn"></div>
     <div id="error" class="error" role="alert" hidden></div>
   </main>

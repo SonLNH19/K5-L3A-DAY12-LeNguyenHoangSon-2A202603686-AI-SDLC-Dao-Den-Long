@@ -1,0 +1,436 @@
+TAP version 13
+# Subtest: tick 0: origin, five stable ids, no events or setup points
+ok 1 - tick 0: origin, five stable ids, no events or setup points
+  ---
+  duration_ms: 3.153311
+  type: 'test'
+  ...
+# Subtest: speed is metres/sec and movement persists across missing frames (Phase 2: 6 m/s)
+ok 2 - speed is metres/sec and movement persists across missing frames (Phase 2: 6 m/s)
+  ---
+  duration_ms: 3.920899
+  type: 'test'
+  ...
+# Subtest: diagonal normalization prevents extra speed
+ok 3 - diagonal normalization prevents extra speed
+  ---
+  duration_ms: 0.778024
+  type: 'test'
+  ...
+# Subtest: 90 degree camera yaw transforms +Z into +X
+ok 4 - 90 degree camera yaw transforms +Z into +X
+  ---
+  duration_ms: 0.888107
+  type: 'test'
+  ...
+# Subtest: jump is one edge, lands, and does not repeat while held
+ok 5 - jump is one edge, lands, and does not repeat while held
+  ---
+  duration_ms: 0.77476
+  type: 'test'
+  ...
+# Subtest: falling off island (Y < -10) penalizes flame, drops motes, and respawns after 60 ticks
+ok 6 - falling off island (Y < -10) penalizes flame, drops motes, and respawns after 60 ticks
+  ---
+  duration_ms: 1.057464
+  type: 'test'
+  ...
+# Subtest: pickup includes exact XZ boundary and height difference (<= 1.5m)
+ok 7 - pickup includes exact XZ boundary and height difference (<= 1.5m)
+  ---
+  duration_ms: 1.329596
+  type: 'test'
+  ...
+# Subtest: initial capacity leaves additional motes available (Phase 3 starts at 10)
+ok 8 - initial capacity leaves additional motes available (Phase 3 starts at 10)
+  ---
+  duration_ms: 0.374363
+  type: 'test'
+  ...
+# Subtest: deposit partial then full emits once, scores +5 per deposit and preserves surplus
+ok 9 - deposit partial then full emits once, scores +5 per deposit and preserves surplus
+  ---
+  duration_ms: 0.802397
+  type: 'test'
+  ...
+# Subtest: interact at exact radius works; beyond radius does not
+ok 10 - interact at exact radius works; beyond radius does not
+  ---
+  duration_ms: 0.522505
+  type: 'test'
+  ...
+# Subtest: nearest unlit lamp is selected deterministically
+ok 11 - nearest unlit lamp is selected deterministically
+  ---
+  duration_ms: 0.216381
+  type: 'test'
+  ...
+# Subtest: scenario lists replace defaults; unnamed lamps remain; no setup score
+ok 12 - scenario lists replace defaults; unnamed lamps remain; no setup score
+  ---
+  duration_ms: 0.430661
+  type: 'test'
+  ...
+# Subtest: shade is active immediately and moves declared speed
+ok 13 - shade is active immediately and moves declared speed
+  ---
+  duration_ms: 2.127424
+  type: 'test'
+  ...
+# Subtest: hit loses one flame with 90 ticks invulnerability and drops floor(carried/2)
+ok 14 - hit loses one flame with 90 ticks invulnerability and drops floor(carried/2)
+  ---
+  duration_ms: 0.364159
+  type: 'test'
+  ...
+# Subtest: multiple shades do not bypass invulnerability in a single tick
+ok 15 - multiple shades do not bypass invulnerability in a single tick
+  ---
+  duration_ms: 7.791555
+  type: 'test'
+  ...
+# Subtest: pulse charges 3 motes, stuns 120 ticks, pushes 4m in 15 ticks, scores +5
+ok 16 - pulse charges 3 motes, stuns 120 ticks, pushes 4m in 15 ticks, scores +5
+  ---
+  duration_ms: 0.632303
+  type: 'test'
+  ...
+# Subtest: pulse without enough light does nothing
+ok 17 - pulse without enough light does nothing
+  ---
+  duration_ms: 0.268269
+  type: 'test'
+  ...
+# Subtest: pulse cooldown 180 ticks blocks new edge until ready
+ok 18 - pulse cooldown 180 ticks blocks new edge until ready
+  ---
+  duration_ms: 1.526487
+  type: 'test'
+  ...
+# Subtest: lit lamp repels shades and protects player
+ok 19 - lit lamp repels shades and protects player
+  ---
+  duration_ms: 5.094169
+  type: 'test'
+  ...
+# Subtest: lighting final lantern does not end night; winning dawn scores once and stops simulation
+ok 20 - lighting final lantern does not end night; winning dawn scores once and stops simulation
+  ---
+  duration_ms: 0.985331
+  type: 'test'
+  ...
+# Subtest: loses with no_flames
+ok 21 - loses with no_flames
+  ---
+  duration_ms: 0.223844
+  type: 'test'
+  ...
+# Subtest: scenario time override counts down by executed steps and dawn ends early
+ok 22 - scenario time override counts down by executed steps and dawn ends early
+  ---
+  duration_ms: 0.167783
+  type: 'test'
+  ...
+# Subtest: last-tick lighting counts at dawn after interaction
+ok 23 - last-tick lighting counts at dawn after interaction
+  ---
+  duration_ms: 0.25963
+  type: 'test'
+  ...
+# Subtest: seed reproduces full state and spawn ids; explicit id does not collide
+ok 24 - seed reproduces full state and spawn ids; explicit id does not collide
+  ---
+  duration_ms: 42.130504
+  type: 'test'
+  ...
+# Subtest: disabled random spawning stays disabled
+ok 25 - disabled random spawning stays disabled
+  ---
+  duration_ms: 1.178014
+  type: 'test'
+  ...
+# Subtest: coordinates have at most 3 decimal precision in snapshot
+ok 26 - coordinates have at most 3 decimal precision in snapshot
+  ---
+  duration_ms: 0.201318
+  type: 'test'
+  ...
+# Subtest: dash triggers, moves 14 m/s in facing direction for 12 ticks, emits dash event
+ok 27 - dash triggers, moves 14 m/s in facing direction for 12 ticks, emits dash event
+  ---
+  duration_ms: 0.254171
+  type: 'test'
+  ...
+# Subtest: wind charm boosts speed to 7.2 m/s and eliminates dash cooldown
+ok 28 - wind charm boosts speed to 7.2 m/s and eliminates dash cooldown
+  ---
+  duration_ms: 0.506226
+  type: 'test'
+  ...
+# Subtest: jump pad on Night 2 launches player towards Island B center with Vy=14, Vhoriz=24
+ok 29 - jump pad on Night 2 launches player towards Island B center with Vy=14, Vhoriz=24
+  ---
+  duration_ms: 0.257878
+  type: 'test'
+  ...
+# Subtest: stray wind (Gió Lạc) chases when carried >= 5 and dist <= 15m, steals min(3, carried)
+ok 30 - stray wind (Gió Lạc) chases when carried >= 5 and dist <= 15m, steals min(3, carried)
+  ---
+  duration_ms: 0.375671
+  type: 'test'
+  ...
+# Subtest: pulse on fleeing stray wind carrying stolen motes causes drifter_drop and drops motes
+ok 31 - pulse on fleeing stray wind carrying stolen motes causes drifter_drop and drops motes
+  ---
+  duration_ms: 0.247609
+  type: 'test'
+  ...
+# Subtest: pause input toggles paused state and freezes simulation timers
+ok 32 - pause input toggles paused state and freezes simulation timers
+  ---
+  duration_ms: 0.26641
+  type: 'test'
+  ...
+# Subtest: reject malformed input, duplicate ticks, nonboolean buttons
+ok 33 - reject malformed input, duplicate ticks, nonboolean buttons
+  ---
+  duration_ms: 0.428512
+  type: 'test'
+  ...
+# Subtest: reject invalid scenario ranges, positions and duplicated ids
+ok 34 - reject invalid scenario ranges, positions and duplicated ids
+  ---
+  duration_ms: 0.217053
+  type: 'test'
+  ...
+# Subtest: CLI defaults snapshot 0,10,20 and mandatory end; output path accepts spaces
+ok 35 - CLI defaults snapshot 0,10,20 and mandatory end; output path accepts spaces
+  ---
+  duration_ms: 46.061273
+  type: 'test'
+  ...
+# Subtest: zero ticks emits initial snapshot then end, does not process input
+ok 36 - zero ticks emits initial snapshot then end, does not process input
+  ---
+  duration_ms: 37.56061
+  type: 'test'
+  ...
+# Subtest: all-lit scenario stays playing before dawn with new deposit score
+ok 37 - all-lit scenario stays playing before dawn with new deposit score
+  ---
+  duration_ms: 33.790152
+  type: 'test'
+  ...
+# Subtest: losing scenario stops at first tick and emits no_flames
+ok 38 - losing scenario stops at first tick and emits no_flames
+  ---
+  duration_ms: 25.24476
+  type: 'test'
+  ...
+# Subtest: identical seeds produce byte-for-byte identical JSONL including spawning
+ok 39 - identical seeds produce byte-for-byte identical JSONL including spawning
+  ---
+  duration_ms: 94.736743
+  type: 'test'
+  ...
+# Subtest: different seeds change random layout
+ok 40 - different seeds change random layout
+  ---
+  duration_ms: 55.664437
+  type: 'test'
+  ...
+# Subtest: custom snapshot interval runs exact N steps
+ok 41 - custom snapshot interval runs exact N steps
+  ---
+  duration_ms: 27.429698
+  type: 'test'
+  ...
+# Subtest: missing input file returns 2 with stderr
+ok 42 - missing input file returns 2 with stderr
+  ---
+  duration_ms: 25.114095
+  type: 'test'
+  ...
+# Subtest: invalid JSON and schema return 2
+ok 43 - invalid JSON and schema return 2
+  ---
+  duration_ms: 106.163819
+  type: 'test'
+  ...
+# Subtest: invalid CLI exits nonzero; rejects negatives, fractional ticks and unknown night
+ok 44 - invalid CLI exits nonzero; rejects negatives, fractional ticks and unknown night
+  ---
+  duration_ms: 128.253546
+  type: 'test'
+  ...
+# Subtest: sparse frames retain move, yaw and button state correctly
+ok 45 - sparse frames retain move, yaw and button state correctly
+  ---
+  duration_ms: 27.827425
+  type: 'test'
+  ...
+# Subtest: v1.2 uses exact durations, thresholds and initial capacities on three nights
+ok 46 - v1.2 uses exact durations, thresholds and initial capacities on three nights
+  ---
+  duration_ms: 2.972164
+  type: 'test'
+  ...
+# Subtest: scenario-lit lamps default to fuel=100, ever_lit=true; no score/capacity reward
+ok 47 - scenario-lit lamps default to fuel=100, ever_lit=true; no score/capacity reward
+  ---
+  duration_ms: 1.550739
+  type: 'test'
+  ...
+# Subtest: one unit/second oil decay uses exact integers, no floating drift
+ok 48 - one unit/second oil decay uses exact integers, no floating drift
+  ---
+  duration_ms: 20.204862
+  type: 'test'
+  ...
+# Subtest: first light costs 10; relight costs 5; capacity grows only on successful lighting
+ok 49 - first light costs 10; relight costs 5; capacity grows only on successful lighting
+  ---
+  duration_ms: 8.080149
+  type: 'test'
+  ...
+# Subtest: partial relight preserves progress, capacity stays unchanged until complete
+ok 50 - partial relight preserves progress, capacity stays unchanged until complete
+  ---
+  duration_ms: 0.350732
+  type: 'test'
+  ...
+# Subtest: capacity formula caps at 20 and resets with each new night
+ok 51 - capacity formula caps at 20 and resets with each new night
+  ---
+  duration_ms: 0.935201
+  type: 'test'
+  ...
+# Subtest: refuel uses ceiling, clamps to 100, scores +5/mote, no new lighting reward
+ok 52 - refuel uses ceiling, clamps to 100, scores +5/mote, no new lighting reward
+  ---
+  duration_ms: 0.209234
+  type: 'test'
+  ...
+# Subtest: refuel is limited by inventory and held interaction does not repeat
+ok 53 - refuel is limited by inventory and held interaction does not repeat
+  ---
+  duration_ms: 0.18639
+  type: 'test'
+  ...
+# Subtest: full lamp is not eligible and cannot hide a receiving lamp (zero-decay unit fixture)
+ok 54 - full lamp is not eligible and cannot hide a receiving lamp (zero-decay unit fixture)
+  ---
+  duration_ms: 0.267065
+  type: 'test'
+  ...
+# Subtest: interaction includes receiving lit lamps and ties choose lower id
+ok 55 - interaction includes receiving lit lamps and ties choose lower id
+  ---
+  duration_ms: 0.358953
+  type: 'test'
+  ...
+# Subtest: fuel loss precedes interaction: extinguishing at step2 allows same-tick relight
+ok 56 - fuel loss precedes interaction: extinguishing at step2 allows same-tick relight
+  ---
+  duration_ms: 0.330562
+  type: 'test'
+  ...
+# Subtest: safe boundary fuel=30 is safe, below 30 is unsafe; decay applies before movement
+ok 57 - safe boundary fuel=30 is safe, below 30 is unsafe; decay applies before movement
+  ---
+  duration_ms: 0.173592
+  type: 'test'
+  ...
+# Subtest: wander chooses nearest weak lamp with deterministic id tie, ignoring nearer dark lamp
+ok 58 - wander chooses nearest weak lamp with deterministic id tie, ignoring nearer dark lamp
+  ---
+  duration_ms: 0.352555
+  type: 'test'
+  ...
+# Subtest: wander without weak lamps moves toward nearest unlit lamp
+ok 59 - wander without weak lamps moves toward nearest unlit lamp
+  ---
+  duration_ms: 0.328244
+  type: 'test'
+  ...
+# Subtest: chase keeps player target even when a weak lamp is near
+ok 60 - chase keeps player target even when a weak lamp is near
+  ---
+  duration_ms: 0.20344
+  type: 'test'
+  ...
+# Subtest: two stationary drainers stack with natural decay, emit once per 60 active drain ticks
+ok 61 - two stationary drainers stack with natural decay, emit once per 60 active drain ticks
+  ---
+  duration_ms: 6.327241
+  type: 'test'
+  ...
+# Subtest: drain turns chase within 6m; beyond 6m it does not use normal 12m detection
+ok 62 - drain turns chase within 6m; beyond 6m it does not use normal 12m detection
+  ---
+  duration_ms: 0.282982
+  type: 'test'
+  ...
+# Subtest: extinguished target releases drain and stops all future fuel events
+ok 63 - extinguished target releases drain and stops all future fuel events
+  ---
+  duration_ms: 0.579844
+  type: 'test'
+  ...
+# Subtest: refueling to at least 30 restores safety, pushes out within 30 ticks without damage
+ok 64 - refueling to at least 30 restores safety, pushes out within 30 ticks without damage
+  ---
+  duration_ms: 0.506012
+  type: 'test'
+  ...
+# Subtest: pulse scores total +15 for drain and +5 for other shade
+ok 65 - pulse scores total +15 for drain and +5 for other shade
+  ---
+  duration_ms: 0.37487
+  type: 'test'
+  ...
+# Subtest: stun expiry returns to wander rather than reacquiring chase in the same tick
+ok 66 - stun expiry returns to wander rather than reacquiring chase in the same tick
+  ---
+  duration_ms: 0.140207
+  type: 'test'
+  ...
+# Subtest: drain displaced beyond 2m returns wander without switching to chase at 8m
+ok 67 - drain displaced beyond 2m returns wander without switching to chase at 8m
+  ---
+  duration_ms: 0.108545
+  type: 'test'
+  ...
+# Subtest: dawn thresholds are 3/5, 4/6, 5/7; no early win and no time reward
+ok 68 - dawn thresholds are 3/5, 4/6, 5/7; no early win and no time reward
+  ---
+  duration_ms: 1.454067
+  type: 'test'
+  ...
+# Subtest: last-tick fuel exhaustion counts before dawn; no_flames outranks enough lights
+ok 69 - last-tick fuel exhaustion counts before dawn; no_flames outranks enough lights
+  ---
+  duration_ms: 0.379647
+  type: 'test'
+  ...
+# Subtest: pause freezes oil, drain counter, successful lights and dawn
+ok 70 - pause freezes oil, drain counter, successful lights and dawn
+  ---
+  duration_ms: 0.176259
+  type: 'test'
+  ...
+# Subtest: scenario capacity validation uses successful_lights and rejects bad oil/state
+ok 71 - scenario capacity validation uses successful_lights and rejects bad oil/state
+  ---
+  duration_ms: 0.460857
+  type: 'test'
+  ...
+1..71
+# tests 71
+# suites 0
+# pass 71
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 679.378932

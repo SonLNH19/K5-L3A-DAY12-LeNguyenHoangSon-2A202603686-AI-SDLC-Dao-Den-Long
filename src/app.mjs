@@ -1,5 +1,13 @@
 import * as THREE from '../vendor/three.module.js';
 import { Game, distance, seededRandom } from './game.mjs';
+import {addForest,disposeForest} from './forest.mjs';
+import {benchmarkScenario,DEFAULT_KEYS,ACTION_LABELS,validateBindings,keyLabel} from './phase4.mjs';
+
+const parameters=new URLSearchParams(location.search);
+const benchmarkMode=parameters.has('benchmark');
+const benchmarkSeed=Number(parameters.get('seed')??42),benchmarkDuration=Number(parameters.get('duration')??30);
+const benchmarkCapture={samples:[],done:false,first_frame_epoch:null,three_revision:THREE.REVISION,renderer:'',scene:{shades:200,motes:100,lit_lanterns:3,fuel_frozen:true,player_pos:[0,0,0],forest_disabled:true,camera_radius:30,camera_y:15,orbit_seconds:15}};
+if(benchmarkMode)window.__benchmark=benchmarkCapture;
 
 const $ = id => document.getElementById(id);
 const contract = await fetch('/game.contract.json').then(r => {
@@ -9,11 +17,12 @@ const contract = await fetch('/game.contract.json').then(r => {
 const T = contract.tuning;
 
 // Settings from localStorage
-let settings = { volume: 80, mouseSens: 5, accessibleColors: false };
+let settings = { volume: 80, mouseSens: 5, accessibleColors: false, reducedMotion: false, largeText:false, keys:{...DEFAULT_KEYS} };
 try {
   const saved = localStorage.getItem('dao_den_long_settings');
   if (saved) settings = { ...settings, ...JSON.parse(saved) };
 } catch {}
+if(!validateBindings(settings.keys))settings.keys={...DEFAULT_KEYS};
 
 let renderer;
 try {
@@ -106,11 +115,15 @@ function glow(parent, size, color = '#FFE58A') {
 // Procedural environment container
 const worldGroup = new THREE.Group();
 scene.add(worldGroup);
+let forest;
 
 function buildEnvironment(night) {
+  disposeForest(forest);forest=null;
+  const oldGeometries=new Set(),oldMaterials=new Set();worldGroup.traverse(o=>{if(o.geometry)oldGeometries.add(o.geometry);if(o.material&&!Object.values(materials).includes(o.material)&&o.material.map!==glowMap)oldMaterials.add(o.material);});
   while (worldGroup.children.length > 0) {
     worldGroup.remove(worldGroup.children[0]);
   }
+  for(const g of oldGeometries)g.dispose();for(const m of oldMaterials)m.dispose();
 
   // Common sea of clouds
   const sea = mesh(new THREE.PlaneGeometry(900, 900), materials.sea, worldGroup, [0, -11, 0]);
@@ -169,6 +182,7 @@ function buildEnvironment(night) {
       ramp.rotation.z = Math.atan2(3, 6);
     }
   }
+  if(!benchmarkMode)forest=addForest({THREE,parent:worldGroup,night,groundHeight:(x,z)=>game.getGroundHeight(x,z),seed:2026});
 }
 
 // Player 3D model
@@ -279,6 +293,8 @@ const keys = new Set();
 const pendingActions = new Set();
 let currentNight = 1;
 let totalCampaignScore = 0;
+let campaignNightsWon=0,scoreSaved=false,captureAction=null;
+let lastSpawnNotice=null;
 let game = new Game(T, { seed: 12, night: currentNight });
 let started = false;
 let paused = true;
@@ -371,6 +387,7 @@ function toast(text) {
 
 function events(list) {
   for (const e of list) {
+    if(e.name==='shade_spawned'){const shade=game.shades.find(s=>s.id===e.data.id);if(shade)lastSpawnNotice={pos:[...shade.pos],until:performance.now()+4000};}
     if (e.name === 'mote_picked') playSound('pickup');
     if (e.name === 'deposit') playSound('deposit');
     if (e.name === 'refuel') { toast(`Đã châm ${e.data.lantern_id}: ${e.data.fuel} dầu`); playSound('deposit'); }
@@ -456,6 +473,7 @@ function showEnd(data) {
 
   if (data.result === 'won') {
     totalCampaignScore += game.score;
+    campaignNightsWon++;
     if (currentNight < 3) {
       $('overlay-kicker').textContent = `ĐÊM 0${currentNight} HOÀN THÀNH · ÁNH SÁNG ĐÃ TRỞ VỀ`;
       $('overlay-title').textContent = 'Hòn đảo đã bừng sáng!';
@@ -483,6 +501,8 @@ function showEnd(data) {
     $('overlay-retry').textContent = 'Thử lại Đêm này';
     $('overlay-next').hidden = true;
   }
+  scoreSaved=false;$('score-form').hidden=!(data.result==='lost'||currentNight===3);
+  $('score-message').textContent='';$('save-score').disabled=false;
 }
 
 function pauseToggle() {
@@ -509,8 +529,9 @@ function pauseToggle() {
 
 function startNight(night, scenario) {
   currentNight = night;
-  buildEnvironment(night);
   game = new Game(T, { seed: 12 + night, scenario: scenario ?? {}, night });
+  buildEnvironment(night);
+  $('score-form').hidden=true;
   pulseAge = 10;
   accumulator = 0;
   keys.clear();
@@ -543,6 +564,7 @@ $('overlay-next').addEventListener('click', () => {
 $('overlay-retry').addEventListener('click', () => {
   if (overlayMode === 'end' && currentNight === 3 && game.state === 'won') {
     totalCampaignScore = 0;
+    campaignNightsWon = 0;
     showIntro(1);
   } else {
     startNight(currentNight);
@@ -565,6 +587,14 @@ function applySettings() {
   $('volume-slider').value=settings.volume;$('volume-val').textContent=`${settings.volume}%`;
   $('mouse-sens-slider').value=settings.mouseSens;$('mouse-sens-val').textContent=settings.mouseSens;
   materials.ink.emissive.set(settings.accessibleColors?'#00B3FF':'#7A3CFF');
+  document.documentElement.classList.toggle('large-text',settings.largeText);
+  document.documentElement.classList.toggle('reduced-motion',settings.reducedMotion);
+  $('reduce-motion').checked=Boolean(settings.reducedMotion);$('large-text').checked=Boolean(settings.largeText);
+  $('keybindings').replaceChildren(...Object.keys(DEFAULT_KEYS).map(action=>{
+    const row=document.createElement('div');row.className='binding-row';const label=document.createElement('span');label.textContent=ACTION_LABELS[action];const button=document.createElement('button');button.type='button';button.className='binding-button';button.dataset.action=action;button.textContent=keyLabel(settings.keys[action]);button.setAttribute('aria-label',`Đổi phím ${ACTION_LABELS[action]}`);button.onclick=()=>{captureAction=action;button.textContent='Nhấn phím…';$('binding-message').textContent='Chọn phím mới; Q/R dành cho camera.';};row.append(label,button);return row;
+  }));
+  document.querySelector('.controls').replaceChildren(...Object.keys(DEFAULT_KEYS).map(action=>{const span=document.createElement('span'),key=document.createElement('kbd');key.textContent=keyLabel(settings.keys[action]);span.append(key,` ${ACTION_LABELS[action]}`);return span;}));
+  $('overlay-guide').textContent=`Di chuyển: ${['up','down','left','right'].map(a=>keyLabel(settings.keys[a])).join(' / ')}. Nhảy: ${keyLabel(settings.keys.jump)}. Lướt: ${keyLabel(settings.keys.dash)}. Tương tác: ${keyLabel(settings.keys.interact)}. Tỏa sáng: ${keyLabel(settings.keys.pulse)}. Tạm dừng: ${keyLabel(settings.keys.pause)}. Thắp mới cần 10, thắp lại 5; giữ 60% đèn tới bình minh. Có thể đổi phím trong Cài đặt.`;
 }
 applySettings();
 function openSettings() {
@@ -577,12 +607,28 @@ $('close-settings').addEventListener('click', () => {
   settings.volume = Number($('volume-slider').value);
   settings.mouseSens = Number($('mouse-sens-slider').value);
   settings.accessibleColors = $('accessible-colors').checked;
+  settings.reducedMotion=$('reduce-motion').checked;settings.largeText=$('large-text').checked;
   try { localStorage.setItem('dao_den_long_settings', JSON.stringify(settings)); } catch {}
   $('settings-modal').hidden = true;
   applySettings();
 });
 $('volume-slider').addEventListener('input', e => { $('volume-val').textContent = `${e.target.value}%`; });
 $('mouse-sens-slider').addEventListener('input', e => { $('mouse-sens-val').textContent = e.target.value; });
+for(const [id,field] of [['accessible-colors','accessibleColors'],['reduce-motion','reducedMotion'],['large-text','largeText']])$(id).addEventListener('change',()=>{settings[field]=$(id).checked;applySettings();});
+$('volume-slider').addEventListener('input',e=>{settings.volume=Number(e.target.value);});$('mouse-sens-slider').addEventListener('input',e=>{settings.mouseSens=Number(e.target.value);});
+$('reset-keys').onclick=()=>{settings.keys={...DEFAULT_KEYS};captureAction=null;applySettings();try{localStorage.setItem('dao_den_long_settings',JSON.stringify(settings));}catch{}$('binding-message').textContent='Đã khôi phục và lưu phím mặc định.';};
+
+async function openLeaderboard(){
+  if(started&&!paused&&game.state==='playing')pauseToggle();$('leaderboard-modal').hidden=false;$('leaderboard-error').textContent='';
+  try{const r=await fetch('/api/leaderboard');if(!r.ok)throw new Error('Không đọc được bảng điểm cục bộ');const data=await r.json();$('leaderboard-rows').replaceChildren(...data.entries.map((e,i)=>{const row=document.createElement('tr');for(const value of [i+1,e.name,e.score,e.nights_won,new Date(e.achieved_at).toLocaleString('vi-VN')]){const td=document.createElement('td');td.textContent=value;row.append(td);}return row;}));$('leaderboard-empty').hidden=data.entries.length>0;}
+  catch(error){$('leaderboard-error').textContent=error.message;}
+}
+$('leaderboard-btn').onclick=openLeaderboard;$('overlay-leaderboard').onclick=openLeaderboard;$('close-leaderboard').onclick=()=>{$('leaderboard-modal').hidden=true;};
+$('return-menu').onclick=()=>{totalCampaignScore=0;campaignNightsWon=0;started=false;keys.clear();pendingActions.clear();game=new Game(T,{seed:13,night:1});$('score-form').hidden=true;showIntro(1);};
+$('score-form').onsubmit=async event=>{event.preventDefault();if(scoreSaved)return;const name=$('player-name').value.trim();if(!/^[A-Za-z0-9_]{3,12}$/.test(name)){$('score-message').textContent='Tên cần 3–12 ký tự A–Z, a–z, 0–9 hoặc _.';return;}
+  try{const r=await fetch('/api/leaderboard',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,score:totalCampaignScore,nights_won:campaignNightsWon,seed:12})});const data=await r.json();if(!r.ok)throw new Error(data.error);scoreSaved=true;$('save-score').disabled=true;$('score-message').textContent='Đã lưu điểm trên máy này.';}
+  catch(error){$('score-message').textContent=error.message;}
+};
 
 // Controls & Keyboard
 const relevant = new Set([
@@ -590,16 +636,19 @@ const relevant = new Set([
   'Space', 'KeyE', 'KeyF', 'KeyQ', 'KeyR', 'ShiftLeft', 'ShiftRight', 'KeyJ'
 ]);
 addEventListener('keydown', e => {
-  if (e.code === 'KeyP' || e.code === 'Escape') {
+  if(captureAction){e.preventDefault();if(['KeyQ','KeyR'].includes(e.code)||Object.entries(settings.keys).some(([action,key])=>action!==captureAction&&key===e.code)){$('binding-message').textContent='⚠ Phím bị trùng hoặc đã dùng cho camera. Hãy chọn phím khác.';return;}settings.keys[captureAction]=e.code;captureAction=null;applySettings();$('binding-message').textContent='Đã chọn phím. Nhấn Lưu và Đóng để lưu.';return;}
+  if(e.target.matches('input,textarea,select'))return;
+  const defaults=Object.keys(DEFAULT_KEYS).every(a=>settings.keys[a]===DEFAULT_KEYS[a]);
+  if (e.code === settings.keys.pause || (defaults&&e.code==='KeyP')) {
     e.preventDefault();
     if (!e.repeat) pauseToggle();
     return;
   }
-  if (relevant.has(e.code)) {
+  if (Object.values(settings.keys).includes(e.code)||['KeyQ','KeyR'].includes(e.code)||(defaults&&relevant.has(e.code))) {
     e.preventDefault();
     if (!paused) {
       keys.add(e.code);
-      if (!e.repeat && ['Space', 'KeyE', 'KeyF', 'ShiftLeft', 'ShiftRight', 'KeyJ'].includes(e.code)) {
+      if (!e.repeat && ([settings.keys.jump,settings.keys.interact,settings.keys.pulse,settings.keys.dash].includes(e.code)||(defaults&&['ShiftRight','KeyJ'].includes(e.code)))) {
         pendingActions.add(e.code);
       }
     }
@@ -631,16 +680,17 @@ function input() {
   if (keys.has('KeyQ')) yaw += 0.025;
   if (keys.has('KeyR')) yaw -= 0.025;
   const action = code => keys.has(code) || pendingActions.has(code);
+  const defaults=Object.keys(DEFAULT_KEYS).every(a=>settings.keys[a]===DEFAULT_KEYS[a]);
   const result = {
     move: [
-      Number(keys.has('KeyD') || keys.has('ArrowRight')) - Number(keys.has('KeyA') || keys.has('ArrowLeft')),
-      Number(keys.has('KeyS') || keys.has('ArrowDown')) - Number(keys.has('KeyW') || keys.has('ArrowUp'))
+      Number(keys.has(settings.keys.right) || (defaults&&keys.has('ArrowRight'))) - Number(keys.has(settings.keys.left) || (defaults&&keys.has('ArrowLeft'))),
+      Number(keys.has(settings.keys.down) || (defaults&&keys.has('ArrowDown'))) - Number(keys.has(settings.keys.up) || (defaults&&keys.has('ArrowUp')))
     ],
     cam_yaw_deg: yaw * 180 / Math.PI,
-    jump: action('Space'),
-    interact: action('KeyE'),
-    pulse: action('KeyF'),
-    dash: action('ShiftLeft') || action('ShiftRight') || action('KeyJ'),
+    jump: action(settings.keys.jump),
+    interact: action(settings.keys.interact),
+    pulse: action(settings.keys.pulse),
+    dash: action(settings.keys.dash) || (defaults&&(action('ShiftRight') || action('KeyJ'))),
     pause: false
   };
   pendingActions.clear();
@@ -719,6 +769,7 @@ function drawMap() {
 
 // Synchronization with 3D scene & HUD
 let lastCountdownSecond = -1;
+let lastHudTime=-Infinity;
 
 function sync(time) {
   const p = game.player;
@@ -730,7 +781,7 @@ function sync(time) {
   }
   character.left.rotation.x = moving ? Math.sin(time * 14) * 0.5 : 0;
   character.right.rotation.x = -character.left.rotation.x;
-  character.group.visible = p.invulnTicks <= 0 || Math.floor(time * 12) % 2 === 0;
+  character.group.visible = settings.reducedMotion || p.invulnTicks <= 0 || Math.floor(time * 12) % 2 === 0;
 
   // Ambient lighting formula from Part 3:
   const litCount = game.lanterns.filter(l => l.lit).length;
@@ -750,7 +801,7 @@ function sync(time) {
     v.aura.visible=l.lit;v.zone.visible=l.lit&&!low;
     v.aura.material.opacity = (.45+Math.sin(time*2)*.05)*blink;
     const screen = new THREE.Vector3(l.pos[0],l.pos[1]+5.3,l.pos[2]).project(camera);
-    v.label.hidden = !started || screen.z>1 || Math.abs(screen.x)>1.05 || Math.abs(screen.y)>1.05;
+    v.label.hidden = benchmarkMode || !started || screen.z>1 || Math.abs(screen.x)>1.05 || Math.abs(screen.y)>1.05;
     v.label.style.left=`${(screen.x*.5+.5)*innerWidth}px`;v.label.style.top=`${(-screen.y*.5+.5)*innerHeight}px`;
     v.label.classList.toggle('low-fuel',low);
     v.label.dataset.lit=String(l.lit);v.label.dataset.fuel=String(l.fuel);v.label.dataset.paperScale=String(v.frame.scale.y);
@@ -773,7 +824,7 @@ function sync(time) {
       scene.add(v);
       moteViews.set(m.id, v);
     }
-    v.position.set(m.pos[0] + Math.sin(time * 1.5 + i) * 0.12, m.pos[1] + 0.6 + Math.sin(time * 2 + i) * 0.18, m.pos[2]);
+    v.position.set(m.pos[0] + (settings.reducedMotion?0:Math.sin(time * 1.5 + i) * 0.12), m.pos[1] + 0.6 + (settings.reducedMotion?0:Math.sin(time * 2 + i) * 0.18), m.pos[2]);
   }
 
   // Shades views
@@ -811,6 +862,15 @@ function sync(time) {
     v.group.visible = c.available;
     v.talisman.rotation.y = time * 2;
   }
+
+  if(benchmarkMode||time-lastHudTime<.1)return;lastHudTime=time;
+  const notices=[];if(lastSpawnNotice&&performance.now()<lastSpawnNotice.until)notices.push('⚠ Bóng Mực xuất hiện!');
+  const windCycle=game.wind.timer%1800;if(game.windEnabled&&windCycle>=1380&&windCycle<1500)notices.push('⚠ Gió mạnh sắp thổi');
+  if(game.timeLeft<=10&&game.state==='playing')notices.push(`⚠ Còn ${Math.ceil(game.timeLeft)} giây tới bình minh`);
+  const weak=game.lanterns.filter(l=>l.lit&&l.fuel<30);if(weak.length)notices.push(`⚠ Đèn yếu: ${weak.map(l=>l.id).join(', ')}`);
+  $('subtitle').textContent=notices.join(' · ');$('subtitle').hidden=!notices.length;
+  $('shade-indicator').hidden=!lastSpawnNotice||performance.now()>=lastSpawnNotice.until||paused;
+  if(!$('shade-indicator').hidden){const v=new THREE.Vector3(...lastSpawnNotice.pos).project(camera);const a=Math.atan2(v.y,v.x)+(v.z>1?Math.PI:0);$('shade-indicator').style.left=`${innerWidth/2+Math.cos(a)*(innerWidth/2-110)}px`;$('shade-indicator').style.top=`${innerHeight/2-Math.sin(a)*(innerHeight/2-95)}px`;$('shade-indicator').querySelector('span').style.transform=`rotate(${-a*180/Math.PI}deg)`;}
 
   // Phase 3: capacity grows with successful first lights and relights, capped at 20.
   $('carried').textContent = p.carried;
@@ -912,7 +972,7 @@ function animate(now) {
   }
 
   pulseAge += dt;
-  if (pulseAge < 0.65) {
+  if (pulseAge < 0.65 && !settings.reducedMotion) {
     const scale = 0.1 + (pulseAge / 0.65) * T.pulse_radius;
     pulseRing.scale.set(scale, scale, 1);
     pulseRing.material.opacity = 0.75 * (1 - pulseAge / 0.65);
@@ -922,7 +982,10 @@ function animate(now) {
 
   sync(now / 1000);
 
-  if (started) {
+  if(benchmarkMode){
+    const elapsed=(now-(benchmarkStart??now))/1000,angle=elapsed*Math.PI*2/15;
+    camera.position.set(30*Math.cos(angle),15,-30*Math.sin(angle));camera.lookAt(0,0,0);
+  }else if (started) {
     const p = game.player.pos;
     desired.set(p[0] + Math.sin(yaw) * 19, p[1] + 14, p[2] + Math.cos(yaw) * 19);
     camera.position.lerp(desired, 1 - Math.exp(-dt * 6));
@@ -935,6 +998,12 @@ function animate(now) {
 
   if (now > toastUntil) $('toast').classList.remove('show');
   renderer.render(scene, camera);
+  if(benchmarkMode){
+    if(benchmarkStart===null){benchmarkStart=now;benchmarkLast=now;benchmarkCapture.first_frame_epoch=performance.timeOrigin+performance.now();const gl=renderer.getContext();const ext=gl.getExtension('WEBGL_debug_renderer_info');benchmarkCapture.renderer=ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER);}
+    const since=(now-benchmarkStart)/1000;
+    if(benchmarkLast>=benchmarkStart+3000&&since<=3+benchmarkDuration)benchmarkCapture.samples.push(now-benchmarkLast);
+    benchmarkLast=now;if(since>=3+benchmarkDuration){benchmarkCapture.done=true;return;}
+  }
   requestAnimationFrame(animate);
 }
 
@@ -964,11 +1033,13 @@ if (new URLSearchParams(location.search).has('qa')) {
       keys.clear();
     },
     get renderer() { return renderer; },
+    get forestCounts() { return forest?.userData.counts??null; },
     get settings() { return {...settings}; },
     get shadeColors() { return [...shadeViews.values()].map(v=>({outline:v.outline.material.color.getHexString(),eyes:v.eyes[0].material.color.getHexString()})); },
     get campaignScore() { return totalCampaignScore; }
   };
 }
 
-showIntro(1);
+let benchmarkStart=null,benchmarkLast=0;
+if(benchmarkMode){game=new Game(T,{night:1,seed:benchmarkSeed,scenario:benchmarkScenario(benchmarkSeed),benchmark:true});started=true;paused=false;$('overlay').hidden=true;document.documentElement.classList.add('benchmark-mode');buildEnvironment(1);}else showIntro(1);
 requestAnimationFrame(animate);

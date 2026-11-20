@@ -1,10 +1,12 @@
-# Đảo Đèn Lồng · Phase 3 — "Đèn cạn dầu"
+# Đảo Đèn Lồng · v1.0.0 — Bình minh
 
-**Video demo:** chưa quay; sẽ thêm link video `.mp4` trước bàn giao cuối. [Ảnh và bằng chứng Phase 3](docs/proof/phase-3/).
+**Video demo:** chủ bài tự quay, chưa hoàn thành. [Kịch bản và cách quay/nộp MP4 dưới 5 phút](docs/demo/HUONG-DAN-QUAY.md). [Tải bản chơi v1.0.0](https://github.com/SonLNH19/K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0).
+
+![Ảnh chụp game thật: cây, đá và Mây](docs/proof/phase-4/browser/playing.png)
 
 Game 3D góc nhìn thứ ba: cùng Mây gom đom đóm, thắp sáng các Đèn Lồng Lớn và né Bóng Mực, Gió Lạc qua 3 hòn đảo (Đảo Bến, Đảo Cau, Đảo Chuông). Nhân vật, bối cảnh và đề bài là bản gốc của lab Day 12 AI SDLC.
 
-**Phạm vi hiện tại:** Ticket-03 và Test Contract v1.2, giữ các cơ chế Phase 2 chưa bị thay thế. Đèn hao dầu, châm/thắp lại được; mục tiêu là sống sót tới bình minh và giữ ít nhất 60% đèn sáng. [Hướng dẫn Phase 3](docs/HUONG-DAN-PHASE-3.md) · [ADR](docs/notes/ADR-003-fuel-and-dawn.md) · [Breaking changes](CHANGELOG.md).
+**Phạm vi hiện tại:** Ticket-04, Test Contract v1.3. Giữ luật Phase 3: sống tới bình minh, ít nhất 60% đèn sáng. Thêm benchmark, soak, bảng điểm lưu trên đĩa, đổi phím và khả năng tiếp cận. [Bằng chứng Phase 4](docs/proof/phase-4/) · [Changelog 4 phase](CHANGELOG.md) · [Retro](docs/notes/RETRO.md).
 
 ## Cài và chơi trong 3 lệnh
 
@@ -17,6 +19,63 @@ npm start
 ```
 
 Mở **http://localhost:4173**. Trên Windows PowerShell, dùng `npm.cmd` thay `npm` nếu bị chặn script (`$env:Path += ';D:\nodejs'`).
+
+## Hướng dẫn chạy trên macOS và Linux
+
+### Chuẩn bị
+
+- Cài **Node.js từ phiên bản 24 trở lên**, kèm npm, từ [trang tải Node.js chính thức](https://nodejs.org/en/download). Node.js 24 là phiên bản đã dùng để kiểm tra trên runner Linux/macOS.
+- Chọn gói phù hợp máy: macOS Apple Silicon dùng ARM64, Mac Intel dùng x64; Linux chọn đúng kiến trúc máy.
+- Dùng Chrome/Chromium hoặc trình duyệt hỗ trợ **WebGL2** để chơi giao diện 3D.
+- Tải hoặc giải nén mã nguồn bản cần chạy, rồi mở **Terminal trong thư mục chứa `package.json`**. Trên macOS dùng Terminal; trên Linux dùng terminal của hệ điều hành.
+
+Kiểm tra công cụ đã cài:
+
+```bash
+node --version
+npm --version
+```
+
+Lệnh đầu cần hiện `v24...` hoặc mới hơn. Nếu báo không tìm thấy lệnh, cài Node.js rồi đóng/mở lại Terminal.
+
+### Cài đặt và mở game — giống nhau trên cả hai hệ
+
+Chạy trong thư mục dự án:
+
+```bash
+npm ci
+npm run build
+npm start
+```
+
+1. `npm ci` cài đúng phiên bản thư viện trong `package-lock.json`; cần Internet khi tải thư viện.
+2. `npm run build` tạo bản web tĩnh trong `dist/`, gồm thư viện và asset cục bộ.
+3. `npm start` mở server. Giữ Terminal chạy, mở trình duyệt tới **http://localhost:4173**, rồi nhấn **Bắt đầu chuyến đi**. `start` cũng tự build nên những lần sau có thể chỉ chạy `npm start`.
+
+Dùng WASD, Space, E, F và Shift/J như bảng điều khiển bên dưới. Để dừng server, quay lại Terminal và nhấn **Ctrl+C**. Không mở `index.html` bằng cách nhấp đúp; game cần được phục vụ qua HTTP.
+
+### Chạy headless hoặc tự kiểm tra
+
+Mở Terminal thứ hai trong cùng thư mục nếu server vẫn đang chạy:
+
+```bash
+npm run verify
+node src/headless.mjs --seed 19 --night 1 --ticks 600 --out output.jsonl
+```
+
+`verify` chạy test logic/CLI và build. Headless không tạo cửa sổ hoặc cần GPU; kết quả ghi vào `output.jsonl`. Có thể đổi `--night 1` thành `--night 2` hoặc `--night 3`.
+
+### Xử lý nhanh
+
+| Hiện tượng | Cách xử lý |
+|---|---|
+| `node` hoặc `npm` không tìm thấy | Cài Node.js >=24 kèm npm, mở lại Terminal và kiểm tra phiên bản |
+| Lỗi thiếu thư viện/không có `node_modules` | Chạy lại `npm ci` trong thư mục có `package.json`, kiểm tra mạng |
+| Cổng 4173 đang dùng | Dừng server cũ hoặc chạy `PORT=4174 npm start`, rồi mở http://localhost:4174 |
+| Trang trắng/lỗi WebGL | Dùng Chrome/Chromium hỗ trợ WebGL2, bật tăng tốc đồ họa; xem thông báo lỗi trên trang |
+| Vẫn thấy bản game cũ | Dừng server, chạy lại `npm start`, tải lại trang bằng Cmd+Shift+R trên Mac hoặc Ctrl+Shift+R trên Linux |
+
+Đã kiểm tra thực tế cài đặt, build, headless và 71 test trên **Linux x64 và macOS 15 Intel x64** bằng GitHub Actions. Giao diện WebGL cũng đã có lượt kiểm tra trình duyệt thành công trên cả Linux và macOS. [Báo cáo, phạm vi và các giới hạn kiểm chứng](docs/notes/platform-verification.md).
 
 ## Điều khiển và luật chơi (Ticket-03)
 
@@ -82,3 +141,43 @@ node src/headless.mjs --seed 19 --night 2 --scenario tests/scenarios/wind-charm.
 - Mũi tên chỉ hướng ngoài màn hình thông minh hướng dẫn người chơi tới đèn chưa sáng gần nhất.
 - Bảng màu và ánh sáng môi trường tăng dần theo số lượng đèn đã thắp theo đúng chuẩn Ticket-02.
 - Phase 3: ánh sáng giảm khi đèn cạn dầu; thanh dầu và dấu hiệu không phụ thuộc màu chỉ ở renderer. [Đánh giá và giới hạn Phase 3](docs/notes/evaluation-phase-3.md).
+
+
+## Phase 4: chạy, đo và lưu điểm
+
+Yêu cầu: Node.js ≥24, npm, trình duyệt WebGL2 (Chrome/Edge/Chromium), GPU/driver hỗ trợ WebGL2. Đã đo tham khảo trên Windows với RTX 4050 Laptop; không quy đổi số này thành yêu cầu cấu hình tối thiểu. Cần mạng khi cài, không dùng CDN khi chơi. Giữ nguyên ba lệnh cài/chạy ở trên; chạy từ repo clone sạch hoặc thư mục mã nguồn đã giải nén. Build tự nhận Chrome/Edge hoặc cài Chromium qua Playwright nếu chưa có. Trên Linux thiếu thư viện hệ thống để chạy Chromium kiểm thử: dùng `npx playwright install --with-deps chromium`; đây là bước chuẩn bị môi trường kiểm thử, không cần để chơi nếu trình duyệt hệ thống đã hoạt động.
+
+| Việc | Lệnh, chạy tại thư mục chứa package.json |
+|---|---|
+| Test logic, CLI và build | `npm run verify` |
+| Test giao diện Chromium | `npm run test:browser` |
+| Tạo bằng chứng logic, determinism và chơi trọn Đêm bằng bot | `npm run proof` |
+| Headless | `node src/headless.mjs --seed 19 --night 1 --ticks 600 --out output.jsonl` |
+| Benchmark chuẩn | `npm run bench -- --seed 42 --duration 30 --out bench.json` |
+| Soak chuẩn | `npm run soak -- --seed 7 --nights 10 --out soak.json` |
+| Xuất bảng xếp hạng | `node scripts/serve.mjs --export-leaderboard out.json` |
+| Đóng gói ZIP phát hành | `npm run release:pack` |
+
+Benchmark mở Chromium có cửa sổ, vùng vẽ 1280×720, 3 giây khởi động rồi đo 30 giây. Giữ cửa sổ hoạt động, tránh chạy browser test/ứng dụng nặng cùng lúc. Cảnh đúng 200 Bóng Mực wander, 100 đom đóm, L1–L3 sáng đầy dầu; không input, sinh thêm, nhặt, sát thương, hao dầu hay kết thúc. Camera Y=15, bán kính 30, một vòng/15 giây, từ (30,15,0). `bench.scene.json` ghi cấu hình và lỗi trình duyệt. Web dùng requestAnimationFrame nên không bảo đảm tắt vsync: báo trung thực `vsync_off:false`. Không đo được RSS tiến trình web từ trang nên `peak_mem_mb:null` theo ngoại lệ của ticket.
+
+Kết quả tham khảo thực chạy: xem `bench.json`, `soak.json` và `docs/proof/phase-4/report.json`. Ngưỡng chấm FPS phải đo lại trên máy giảng viên; số cục bộ không thay kết quả chấm. Soak chạy 10 Đêm trong một tiến trình Node, Đêm 1→2→3 lặp lại, seed 8…17 khi base=7 (i bắt đầu từ 1). Lệnh dùng `--jitless --expose-gc --max-semi-space-size=1` để tránh chi phí tăng bộ nhớ JIT và thu gom trước hai mốc RSS; không trừ bộ nhớ hay đệm baseline. Lần thử không tắt JIT đã vượt 20%, vì vậy chọn chế độ này cho harness headless; không ảnh hưởng đồ họa chơi thật.
+
+Bảng xếp hạng: sau thua hoặc thắng Đêm 3, nhập tên 3–12 ký tự A–Z/a–z/0–9/_. Chỉ cộng điểm các Đêm đã thắng; giữ top 10, bằng điểm ưu tiên thời điểm sớm hơn. Seed lưu là seed chiến dịch 12; seed Đêm n là 12+n. Có nút Bảng xếp hạng ở menu. Không cần tài khoản hay mạng. Dữ liệu `leaderboard.json` lưu tại:
+
+- Windows: `%LOCALAPPDATA%/DaoDenLong/`.
+- macOS: `~/Library/Application Support/DaoDenLong/`.
+- Linux: `$XDG_DATA_HOME/dao-den-long/`, mặc định `~/.local/share/dao-den-long/`.
+
+Biến môi trường `LANTERN_DATA_DIR` đổi vị trí dữ liệu cho kiểm thử. Cài đặt giao diện/phím được lưu trong localStorage của cùng địa chỉ server. Không xóa dữ liệu trình duyệt nếu muốn giữ cài đặt. Bảng điểm lưu trên đĩa qua server Node, vì thế hãy dùng `npm start` hoặc `node run.mjs` của gói ZIP để có đầy đủ tính năng.
+
+Trong Cài đặt, đổi đủ 9 hành động (W/S/A/D, Space, Shift trái, E, F, Esc mặc định); phím trùng được báo và không ghi đè. Có Khôi phục mặc định, Bảng màu dễ phân biệt, Giảm chuyển động và Chữ lớn ×1.25. UI tối thiểu 18 px tại 1280×720. Chỉ báo hình ảnh: Bóng xuất hiện kèm mũi tên, gió sắp thổi, 10 giây cuối và đèn dầu dưới 30. Cảnh báo nhấp nháy đèn là thông tin gameplay; giảm chuyển động tắt các hiệu ứng chuyển động trang trí/pulse.
+
+## Sáng tạo của tôi — rừng trên đảo
+
+Thêm 70 cây nhiều tầng tán, 60 đá có rêu, 45 dương xỉ, 24 nấm và 7 thân cây đổ mỗi đảo bằng geometry/InstancedMesh. Tự tạo bằng code, không tải asset và không thêm va chạm hay thay đổi RNG mô phỏng. Tránh lối đi, điểm xuất phát và đèn. Rừng được tắt trong benchmark và không có trong headless/soak để giữ cảnh chuẩn. Bằng chứng: ảnh chơi thật ở đầu README, test browser kiểm tra số cây và render không lỗi.
+
+## Bản tải về và tình trạng nộp bài
+
+Release `v1.0.0` cung cấp `dao-den-long-v1.0.0.zip`. Giải nén, mở Terminal trong thư mục có run.mjs, chạy `node run.mjs`, vào http://localhost:4173; chỉ cần Node ≥24, không cần npm install. Windows/macOS/Linux cùng một gói. Ctrl+C dừng. Mã nguồn và hướng dẫn đầy đủ vẫn ở repo.
+
+Đối chiếu yêu cầu nộp: [checklist Phase 4](docs/notes/phase-4.md), [SUBMISSION](SUBMISSION.md), [RULES](RULES.md). **Video do chủ bài tự quay, phải bổ sung link MP4 ở đầu README hoặc đính kèm Release trước hạn Coach quy định.** Chưa có video thì DoD Phase 4 chưa đủ. Không thể khẳng định test ẩn đạt khi chưa được chạy.

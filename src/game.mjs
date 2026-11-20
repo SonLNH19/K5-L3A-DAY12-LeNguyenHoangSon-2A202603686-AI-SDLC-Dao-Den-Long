@@ -143,7 +143,7 @@ export function getNightConfig(night) {
 }
 
 export class Game {
-  constructor(tuning, { seed = 1, scenario = {}, night = 1 } = {}) {
+  constructor(tuning, { seed = 1, scenario = {}, night = 1, benchmark = false } = {}) {
     validateScenario(scenario, tuning);
     this.t = structuredClone(tuning);
     this.isScenario = Boolean(scenario && Object.keys(scenario).length > 0);
@@ -156,6 +156,7 @@ export class Game {
     this.state = 'playing';
     this.paused = false;
     this.score = 0;
+    this.benchmark=benchmark;
 
     const defaultDuration = this.night === 1 ? this.t.night1_duration_s : (this.night === 2 ? this.t.night2_duration_s : this.t.night3_duration_s);
     this.initialTime = scenario.time_left_s ?? defaultDuration;
@@ -426,7 +427,19 @@ export class Game {
     }
   }
 
+  moveWanderingShade(s,speed) {
+    const weak=this.lanterns.filter(l=>l.lit&&l.fuelUnits<this.t.low_fuel_threshold*HZ);
+    const choices=weak.length?weak:this.lanterns.filter(l=>!l.lit);
+    choices.sort((a,b)=>distance(s.pos,a.pos)-distance(s.pos,b.pos)||(a.id<b.id?-1:1));
+    const target=choices[0];s.target_lantern_id=target?.id??null;
+    if(!target)return;
+    const d=distance(s.pos,target.pos);
+    if(target.lit&&d<=2+EPS){s.state='drain';s.drainTicks=0;}
+    else if(d>EPS){const amount=Math.min(d,speed/HZ);s.pos=this.excludeSafeZones([s.pos[0]+(target.pos[0]-s.pos[0])/d*amount,s.pos[1],s.pos[2]+(target.pos[2]-s.pos[2])/d*amount]);if(target.lit&&distance(s.pos,target.pos)<=2+EPS){s.state='drain';s.drainTicks=0;}}
+  }
+
   step(patch = {}) {
+    if(this.benchmark){this.tick++;this.simTick++;this.events=[];for(const shade of this.shades)this.moveWanderingShade(shade,this.config.shadeSpeed);return this.events;}
     if (this.state !== 'playing' && this.state !== 'paused') return [];
 
     const old = this.input;
@@ -872,20 +885,7 @@ export class Game {
         }
         s.pos = this.excludeSafeZones(target);
       } else if (s.state === 'wander') {
-        const weak = this.lanterns.filter(l => l.lit && l.fuelUnits < t.low_fuel_threshold * HZ);
-        const choices = weak.length ? weak : this.lanterns.filter(l => !l.lit);
-        choices.sort((a, b) => distance(s.pos, a.pos) - distance(s.pos, b.pos) || (a.id < b.id ? -1 : 1));
-        const target = choices[0];
-        s.target_lantern_id = target?.id ?? null;
-        if (target) {
-          const ld = distance(s.pos, target.pos);
-          if (target.lit && ld <= 2 + EPS) { s.state = 'drain'; s.drainTicks = 0; }
-          else if (ld > EPS) {
-            const amount = Math.min(ld, curShadeSpeed / HZ);
-            s.pos = this.excludeSafeZones([s.pos[0] + (target.pos[0] - s.pos[0]) / ld * amount, s.pos[1], s.pos[2] + (target.pos[2] - s.pos[2]) / ld * amount]);
-            if (target.lit && distance(s.pos, target.pos) <= 2 + EPS) { s.state = 'drain'; s.drainTicks = 0; }
-          }
-        }
+        this.moveWanderingShade(s,curShadeSpeed);
       }
     }
 

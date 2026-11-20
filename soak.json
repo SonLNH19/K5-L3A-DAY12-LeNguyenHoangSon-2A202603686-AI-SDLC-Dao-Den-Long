@@ -1,0 +1,81 @@
+{
+  "nights": 10,
+  "crashes": 0,
+  "results": [
+    "lost",
+    "lost",
+    "lost",
+    "lost",
+    "lost",
+    "lost",
+    "lost",
+    "lost",
+    "lost",
+    "lost"
+  ],
+  "mem_start_mb": 32.8359375,
+  "mem_end_mb": 36.7109375,
+  "duration_s": 1.5417081000000001,
+  "runs": [
+    {
+      "night": 1,
+      "seed": 8,
+      "ticks": 2256,
+      "result": "lost"
+    },
+    {
+      "night": 2,
+      "seed": 9,
+      "ticks": 3402,
+      "result": "lost"
+    },
+    {
+      "night": 3,
+      "seed": 10,
+      "ticks": 5184,
+      "result": "lost"
+    },
+    {
+      "night": 1,
+      "seed": 11,
+      "ticks": 1701,
+      "result": "lost"
+    },
+    {
+      "night": 2,
+      "seed": 12,
+      "ticks": 1332,
+      "result": "lost"
+    },
+    {
+      "night": 3,
+      "seed": 13,
+      "ticks": 2014,
+      "result": "lost"
+    },
+    {
+      "night": 1,
+      "seed": 14,
+      "ticks": 1004,
+      "result": "lost"
+    },
+    {
+      "night": 2,
+      "seed": 15,
+      "ticks": 3839,
+      "result": "lost"
+    },
+    {
+      "night": 3,
+      "seed": 16,
+      "ticks": 3123,
+      "result": "lost"
+    },
+    {
+      "night": 1,
+      "seed": 17,
+      "ticks": 3237,
+      "result": "lost"
+    }
+  ]
+}

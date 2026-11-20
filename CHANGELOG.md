@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.0.0 — Phase 4 — Contract v1.3
+
+- Thêm bench_cmd/soak_cmd và đo FPS thực bằng Chromium, soak 10 Đêm cùng tiến trình.
+- Bảng điểm top 10 trên đĩa, API cục bộ và CLI export; điểm chỉ gồm các Đêm thắng.
+- Đổi đủ phím, phát hiện trùng, lưu cài đặt, giảm chuyển động, chữ lớn và chỉ báo hướng/cảnh báo.
+- Rừng thủ tục bằng instancing, tắt trong benchmark/headless; không đổi gameplay Phase 3.
+- Gói ZIP chạy bằng Node trên Windows/macOS/Linux, tài liệu/retro/hướng dẫn chủ bài tự quay video.
+- Thay đổi tích hợp: contract_version từ 1.2 lên 1.3, run_cmd dùng trực tiếp node scripts/serve.mjs để nhận --export-leaderboard; client kiểm phiên bản cần cập nhật. Không đổi luật/tuning cũ.
+
 ## Phase 3 — Contract v1.2 — Đèn cạn dầu
 
 ### Breaking changes
@@ -19,3 +28,14 @@
 - HUD sức chứa động, mục tiêu bình minh, lời thoại phù hợp; sửa chuyển Đêm giữ currentNight cũ và CSS ghi đè thuộc tính hidden.
 - ADR-003 ghi quyết định, thứ tự tick và lý do cập nhật test; test Phase 1–2 còn hiệu lực được giữ, không skip.
 - Bằng chứng mới ở docs/proof/phase-3/, CI upload đúng thư mục; giữ nguyên bằng chứng các phase trước.
+
+
+## Phase 2 — Contract v1.1 — Ba hòn đảo
+
+- Chuẩn hóa tuning, 3 Đêm, dash, gió, bùa, bục nhảy, drifter, pause và tổng điểm chiến dịch.
+- Snapshot/scenario mở rộng; cập nhật các kỳ vọng cũ bị luật chuẩn thay thế. Bằng chứng docs/proof/phase-2/.
+
+## Phase 1 — Contract v1.0 — Đảo Đèn Lồng
+
+- Bản chơi 3D đầu tiên, nhặt/nạp đom đóm, Bóng Mực, Tỏa Sáng, thắng/thua, HUD và replay.
+- Lõi 60 Hz dùng chung browser/headless, contract, test, harness và bằng chứng docs/proof/phase-1/.

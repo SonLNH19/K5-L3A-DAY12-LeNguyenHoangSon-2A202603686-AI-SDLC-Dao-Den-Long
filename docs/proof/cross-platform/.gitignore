@@ -1,0 +1,6 @@
+# Original GitHub ZIP downloads are retained locally and available as CI artifacts.
+*.zip
+# Exploratory extraction of the first run; authoritative selected reports are separate.
+run-44751112958/linux/
+run-44751112958/linux-browser/
+run-44751112958/macos-browser/

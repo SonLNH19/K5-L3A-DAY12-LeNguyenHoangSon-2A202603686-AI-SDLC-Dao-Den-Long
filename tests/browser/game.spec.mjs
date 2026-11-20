@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 
-const proof = 'docs/proof/phase-3/browser';
+const proof = 'docs/proof/phase-4/browser';
 const fixture = name => JSON.parse(readFileSync(`tests/scenarios/${name}.json`, 'utf8'));
 
 test.beforeEach(async ({ page }) => {
@@ -71,7 +71,7 @@ test('3D renders without JS errors; start, keyboard, jump, dash, pause and respo
   await page.screenshot({ path: `${proof}/small-window.png` });
 
   expect(errors).toEqual([]);
-  writeFileSync(`${proof}/render.json`, JSON.stringify({ platform: process.platform, gl, page_errors: errors, scope: 'Phase 3 Chromium software WebGL renderer; macOS/Linux not verified by this local report' }, null, 2));
+  writeFileSync(`${proof}/render.json`, JSON.stringify({ platform: process.platform, gl, page_errors: errors, scope: 'Phase 4 Chromium software WebGL renderer; macOS/Linux not verified by this local report' }, null, 2));
 });
 
 // Ticket-03 replaces early all_lit: test real E, then advance actual ticks to dawn.
@@ -134,4 +134,19 @@ test('F key consumes 3 carried light and stuns a nearby shade', async ({ page })
   expect(await page.evaluate(() => window.__qa.game.shades[0].state)).toBe('stunned');
   await expect(page.locator('#lamp-count')).toHaveText('1');
   await page.screenshot({ path: `${proof}/pulse-and-lit-lamp.png` });
+});
+
+test('Phase4 forest,18px UI,remap conflict,large text and reduced motion persist',async({page})=>{
+  await page.setViewportSize({width:1280,height:720});expect(await page.evaluate(()=>window.__qa.forestCounts.trees)).toBe(70);
+  await page.locator('#overlay-settings').click();await page.getByRole('button',{name:'Đổi phím Tương tác',exact:true}).click();await page.keyboard.press('KeyW');await expect(page.locator('#binding-message')).toContainText('trùng');await page.keyboard.press('KeyG');
+  await page.getByLabel('Giảm chuyển động',{exact:true}).check();await page.getByLabel('Chữ lớn (×1.25)',{exact:true}).check();await page.locator('#close-settings').click();
+  expect(await page.evaluate(()=>window.__qa.settings.keys.interact)).toBe('KeyG');expect(await page.evaluate(()=>window.__qa.settings.reducedMotion)).toBe(true);
+  const font=await page.locator('#start').evaluate(el=>parseFloat(getComputedStyle(el).fontSize));expect(font).toBeGreaterThanOrEqual(22.5);
+  await page.screenshot({path:`${proof}/forest-large-text.png`});await page.reload();await page.waitForFunction(()=>Boolean(window.__qa));expect(await page.evaluate(()=>window.__qa.settings.keys.interact)).toBe('KeyG');
+  await page.locator('#overlay-settings').click();await page.locator('#reset-keys').click();expect(await page.evaluate(()=>window.__qa.settings.keys.interact)).toBe('KeyE');await page.locator('#close-settings').click();
+});
+test('Phase4 loss offers score entry,server persists it and leaderboard survives reload',async({page})=>{
+  await page.evaluate(s=>{window.__qa.loadScenario(s);window.__qa.advance(1);},fixture('lose'));
+  await expect(page.locator('#score-form')).toBeVisible();await page.getByLabel('Tên lưu điểm',{exact:false}).fill('Demo_User');await page.locator('#save-score').click();await expect(page.locator('#score-message')).toContainText('Đã lưu');
+  await page.locator('#overlay-leaderboard').click();await expect(page.locator('#leaderboard-rows')).toContainText('Demo_User');await page.screenshot({path:`${proof}/leaderboard.png`});await page.reload();await page.waitForFunction(()=>Boolean(window.__qa));await page.locator('#overlay-leaderboard').click();await expect(page.locator('#leaderboard-rows')).toContainText('Demo_User');
 });

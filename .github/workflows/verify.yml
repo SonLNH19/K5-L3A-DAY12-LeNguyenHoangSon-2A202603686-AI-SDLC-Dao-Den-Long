@@ -25,7 +25,7 @@ jobs:
         if: always()
         with:
           name: proof-${{ matrix.os }}
-          path: docs/proof/phase-3/
+          path: docs/proof/phase-4/
   browser:
     strategy:
       fail-fast: false
@@ -47,4 +47,4 @@ jobs:
           name: browser-proof-${{ matrix.os }}
           path: |
             test-results/
-            docs/proof/phase-3/browser/
+            docs/proof/phase-4/browser/

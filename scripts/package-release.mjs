@@ -1,0 +1,13 @@
+import {readFileSync,writeFileSync,mkdirSync,readdirSync,statSync} from 'node:fs';import {join,relative} from 'node:path';import {build,ROOT} from './build.mjs';
+build();const prefix='dao-den-long-v1.0.0/',files=[];
+function add(path,name){files.push({name:prefix+name,data:readFileSync(path)});}
+function walk(dir){for(const name of readdirSync(dir)){const path=join(dir,name);if(statSync(path).isDirectory())walk(path);else add(path,relative(ROOT,path).replaceAll('\\','/'));}}
+walk(join(ROOT,'dist'));
+for(const name of ['scripts/serve.mjs','scripts/build.mjs','src/leaderboard.mjs','LICENSE','CREDITS.md'])add(join(ROOT,name),name);
+files.push({name:prefix+'run.mjs',data:Buffer.from("process.env.LANTERN_SKIP_BUILD='1'; await import('./scripts/serve.mjs');\n")});
+files.push({name:prefix+'README-RUN.txt',data:Buffer.from('Đảo Đèn Lồng v1.0.0\nCần Node.js >=24 trên Windows/macOS/Linux. Không cần npm install cho gói này.\nMở Terminal trong thư mục giải nén, chạy: node run.mjs\nMở http://localhost:4173. Ctrl+C để dừng.\nXuất bảng điểm: node run.mjs --export-leaderboard out.json\nBảng điểm lưu cục bộ trong thư mục dữ liệu người dùng, không ghi trong gói game.\n')});
+const table=Array.from({length:256},(_,n)=>{let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;return c>>>0;});
+const crc=data=>{let c=0xffffffff;for(const b of data)c=table[(c^b)&255]^(c>>>8);return(c^0xffffffff)>>>0;};
+const chunks=[],central=[];let offset=0;
+for(const f of files){const name=Buffer.from(f.name),checksum=crc(f.data),h=Buffer.alloc(30);h.writeUInt32LE(0x04034b50,0);h.writeUInt16LE(20,4);h.writeUInt16LE(0x800,6);h.writeUInt16LE(33,12);h.writeUInt32LE(checksum,14);h.writeUInt32LE(f.data.length,18);h.writeUInt32LE(f.data.length,22);h.writeUInt16LE(name.length,26);chunks.push(h,name,f.data);const c=Buffer.alloc(46);c.writeUInt32LE(0x02014b50,0);c.writeUInt16LE(20,4);c.writeUInt16LE(20,6);c.writeUInt16LE(0x800,8);c.writeUInt16LE(33,14);c.writeUInt32LE(checksum,16);c.writeUInt32LE(f.data.length,20);c.writeUInt32LE(f.data.length,24);c.writeUInt16LE(name.length,28);c.writeUInt32LE(offset,42);central.push(c,name);offset+=h.length+name.length+f.data.length;}
+const directory=Buffer.concat(central),end=Buffer.alloc(22);end.writeUInt32LE(0x06054b50,0);end.writeUInt16LE(files.length,8);end.writeUInt16LE(files.length,10);end.writeUInt32LE(directory.length,12);end.writeUInt32LE(offset,16);mkdirSync(join(ROOT,'artifacts'),{recursive:true});writeFileSync(join(ROOT,'artifacts/dao-den-long-v1.0.0.zip'),Buffer.concat([...chunks,directory,end]));console.log('Đã đóng gói artifacts/dao-den-long-v1.0.0.zip');

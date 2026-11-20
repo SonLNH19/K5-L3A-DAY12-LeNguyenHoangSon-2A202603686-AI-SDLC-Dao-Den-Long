@@ -33,3 +33,7 @@ output.jsonl
 
 # Student harness must stay in the submitted repository (RULES section 7)
 !AGENTS.md
+
+# Release bundles are uploaded to GitHub Releases, not source history.
+artifacts/*.zip
+artifacts/release-extracted/
