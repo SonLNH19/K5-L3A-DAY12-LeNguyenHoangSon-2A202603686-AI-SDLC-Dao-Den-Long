@@ -1,5 +1,7 @@
 # Hướng dẫn từng bước cho người học (Phase 2 — Ticket-02)
 
+> Tài liệu bên dưới giữ hướng dẫn Phase 2 để tham khảo. **Bản hiện tại là Phase 3 / v1.2:** xem [HUONG-DAN-PHASE-3.md](HUONG-DAN-PHASE-3.md) để dùng luật, seed và bằng chứng mới. Không áp dụng các luật bị thay bên dưới cho bản hiện tại.
+
 ## 1. Bài đã làm tới đâu?
 
 Bản triển khai này hoàn thành **Phase 2 (Ticket-02 — "Ba hòn đảo")** và Test Contract v1.1.

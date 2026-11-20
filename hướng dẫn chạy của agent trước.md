@@ -543,3 +543,67 @@ Khi nhận được đề bài **Ticket-03 (Phase 3)** từ người dùng / gi�
 5. **Commit & Gắn tag:**
    - Thực hiện commit nhỏ, rõ ràng.
    - Gắn tag `phase-3` vào commit hoàn thành Phase 3 và hướng dẫn người dùng push.
+
+---
+
+# PHẦN TIẾP TỤC BÀN GIAO: PHASE 3 — ĐÈN CẠN DẦU
+
+Ghi nhận 20/11/2026 (GMT+7). Phần này cập nhật trạng thái mới nhất, ưu tiên hơn các số liệu/lệnh không còn phù hợp trong phần Phase 1–2 bên trên.
+
+## 21. Phạm vi đã thực hiện
+
+- Người dùng đã cung cấp Ticket-03 và yêu cầu làm Phase 3. Nền repo đã có Phase 2; baseline 45 test đạt trước sửa.
+- Contract hiện tại v1.2. Dầu hữu hạn, châm/thắp lại, drain, thắng tại bình minh, sức chứa tăng, điểm mới và bảng màu dễ phân biệt đã triển khai cho cả ba Đêm.
+- Bảo toàn di chuyển, nhảy, dash, địa hình, charm, drifter, pause và cơ chế khác chưa bị thay của Phase 2.
+- Xem yêu cầu: docs/requirements/TICKET-03.md. ADR: docs/notes/ADR-003-fuel-and-dawn.md. Breaking changes: CHANGELOG.md. Hướng dẫn người học: docs/HUONG-DAN-PHASE-3.md.
+
+## 22. Các quyết định và code cần biết
+
+- src/game.mjs: fuelUnits nguyên, fuel=fuelUnits/60; mỗi tick hao 1 đơn vị, mỗi drainer thêm 5. Chỉ snapshot/UI làm tròn dầu một chữ số thập phân.
+- Fuel loss/drain ở bước 2, tắt đèn trước di chuyển/tương tác; xét kết thúc cuối tick. Mất máu cuối tick ưu tiên no_flames; bình minh đủ ceil(0.6*total) thì dawn_survived. Không còn all_lit thắng sớm.
+- Thời lượng 240/270/300s; ngưỡng sáng 3/5,4/6,5/7.
+- Thắp lần đầu 10, lại 5; fuel=100. Châm dùng min(carried,ceil((100-fuel)/10)), clamp100. Tương tác chọn đèn nhận được gần nhất, hòa id nhỏ hơn.
+- Vùng an toàn chỉ còn khi fuel>=30. Wander ưu tiên đèn yếu; drain đứng yên trong 2m, hút cộng dồn, ngắt theo điều kiện ticket. Mỗi 60 tick hút liên tiếp của từng con ghi fuel_drain; pause không tính.
+- Khôi phục vùng sáng đẩy Bóng Mực ra mép trong 30 tick, không gây sát thương trong lúc đó. Hết stun/rời drain về wander, không kích lại chase trong cùng tick chuyển.
+- Capacity=min(20,10+2*successful_lights), reset mỗi Đêm; scenario lights không tăng counter.
+- Điểm: +5/con nạp/châm, +100 first, +40 relight; pulse +5 hoặc tổng+15 nếu trước đó drain; bình minh thắng +50+floor(fuel) mỗi đèn và +50 mỗi máu; bỏ thưởng thời gian.
+- UI: thanh dầu, đèn/thanh nhấp nháy cùng 1Hz dưới30, giấy đèn tắt xẹp20% và có vết rách. Cài đặt accessibleColors lưu trong dao_den_long_settings, mắt/viền xanh00B3FF, danger trắng kèm ⚠; chỉ renderer/UI thay đổi.
+- Sửa lỗi Phase 2: showIntro phải cập nhật currentNight; CSS [hidden] phải thực sự ẩn; thêm nút Cài đặt dùng được từ màn giới thiệu.
+
+## 23. Test và bằng chứng Phase 3
+
+- 71 test logic/headless/hồi quy đạt; 5 browser test đạt trên Windows Chrome software WebGL.
+- Không skip test. Các kỳ vọng +10/deposit, all_lit early-win và thưởng thời gian được thay có comment và giải trình ADR/changelog.
+- Bằng chứng mới: docs/proof/phase-3/. Không sửa hoặc ghi đè proof/phase-1 và proof/phase-2.
+- Có JSONL relight/refuel/drain/dawn/no-early-win và scenario hồi quy cũ; tất định cho ba Đêm và tình huống refuel; source-hashes.json và report.json.
+- Lượt mặc định seed4 thắng đúng tick14400 (240s), 1169 điểm, còn3 đèn và3 máu. Bot dùng input thật, không scenario override/state edit. Bot không thắng mọi seed; seed4 được chọn công khai sau thử một số seed, không nhận là người học chơi.
+- Benchmark Phase 3 là đủ18000 tick của Đêm3 mới, scenario không nguy hiểm/không gió để tránh dừng sớm; khoảng0.07s local, số mới nhất trong report.json. Không nhận là benchmark21600tick hoặc FPS/GPU.
+- Browser test nhảy chuyển từ sleep cố định sang polling trạng thái thật; vẫn kiểm tra nhấn phím thật. Các lần test thất bại trước đó được sửa, lần cuối cả5 đạt với exit0.
+
+## 24. Lệnh hiện tại và Git
+
+```powershell
+cd 'D:\LAB AITC\LAB 12\K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long'
+npm.cmd start
+```
+
+Mở http://localhost:4173. Dừng server cũ/start lại để rebuild, reload trình duyệt. Test ở terminal khác:
+
+```powershell
+npm.cmd run verify
+npm.cmd run test:browser
+npm.cmd run proof
+node src/headless.mjs --seed 4 --night 1 --inputs docs/proof/phase-3/full-run.inputs.json --ticks 14400 --out output.jsonl
+```
+
+- Commit lõi: fe35156. Commit GUI/bảng màu/CI: 8cdb4a5. Commit tài liệu/bằng chứng cuối xem git log.
+- Tag nộp là phase-3, gắn sau khi kiểm tra bản hoàn chỉnh. Kiểm tra git show phase-3 trước push. Chưa push trong phiên agent này.
+- **Không làm theo lệnh git push origin phase-2 --force trong phần lịch sử cũ.** Không sửa/force-push tag phase trước. Người học chỉ cần push main và phase-3 sau review, theo hạn Coach.
+- Workflow CI nay upload artifact docs/proof/phase-3. Chưa có kết quả Linux/macOS remote; chỉ xác nhận khi job tương ứng thật sự xanh.
+
+## 25. Việc còn lại cho người học/agent sau
+
+1. Người học chơi thử châm dầu, cạn/thắp lại, bảng màu và bình minh; đọc ADR để giải thích được bài.
+2. Push commit/tag rồi xem Actions, sửa lỗi nền tảng nếu có. Không khẳng định đã chạy test ẩn hoặc Safari/GPU Mac.
+3. Cần Ticket-04 để làm Phase 4; chưa tạo Release v1.0.0 hoặc video cuối. Không tự bịa yêu cầu.
+4. Giữ quy định bằng chứng thật, harness/lịch sử Git, bảo mật và hạn Coach. Token/chi phí chưa có thống kê xác thực.

@@ -1,0 +1,191 @@
+{
+  "generated_at": "2026-11-20T09:46:50.093Z",
+  "phase": "phase-3",
+  "contract_version": "1.2",
+  "platform": "win32",
+  "arch": "x64",
+  "os_release": "10.0.26300",
+  "cpu": "13th Gen Intel(R) Core(TM) i5-13500HX",
+  "node": "v26.13.1",
+  "base_commit": "8cdb4a57cb5f273df54fd7d3b981fc06b2dd3efb",
+  "benchmark_actual_ticks": 18000,
+  "benchmark_seconds": 0.0688406,
+  "benchmark_note": "Current full Night 3 is 300s; no hazards/wind to avoid early exit. This is not a GPU/FPS benchmark.",
+  "benchmark_target_seconds": 30,
+  "benchmark_passed": true,
+  "full_run_seed": 4,
+  "checks": [
+    {
+      "name": "pickup",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "no-early-win",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 150
+      }
+    },
+    {
+      "name": "dawn-win",
+      "expected": "won",
+      "end": {
+        "type": "end",
+        "ticks": 1,
+        "state": "won",
+        "score": 597
+      }
+    },
+    {
+      "name": "fuel-drain",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 180,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "refuel",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 30,
+        "state": "playing",
+        "score": 15
+      }
+    },
+    {
+      "name": "relight",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 1,
+        "state": "playing",
+        "score": 65
+      }
+    },
+    {
+      "name": "lose",
+      "expected": "lost",
+      "end": {
+        "type": "end",
+        "ticks": 1,
+        "state": "lost",
+        "score": 0
+      }
+    },
+    {
+      "name": "dash",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "wind-charm",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "jump-pad",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "stray-wind",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "fall",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "pause",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "night2",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "night3",
+      "expected": "playing",
+      "end": {
+        "type": "end",
+        "ticks": 650,
+        "state": "playing",
+        "score": 0
+      }
+    },
+    {
+      "name": "full-default-run",
+      "expected": "won",
+      "end": {
+        "type": "end",
+        "ticks": 14400,
+        "state": "won",
+        "score": 1169
+      }
+    }
+  ],
+  "determinism": {
+    "identical_night1": true,
+    "identical_night2": true,
+    "identical_night3": true,
+    "identical_fuel_refuel": true,
+    "fuel_sha256": "6cfa004e9136db61cf74d9930fc90f0f113dbb681cb841803413cc941dfcf8be"
+  },
+  "limits": [
+    "Không chứng minh test ẩn của giảng viên đạt.",
+    "Nền tảng khác chỉ được xác nhận bằng job CI tương ứng hoặc chạy thật.",
+    "Ảnh và kiểm tra GUI nằm trong bộ browser test riêng."
+  ]
+}

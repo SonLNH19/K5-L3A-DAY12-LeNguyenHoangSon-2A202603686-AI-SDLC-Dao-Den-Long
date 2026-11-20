@@ -1,0 +1,11 @@
+{
+  "platform": "win32",
+  "gl": {
+    "webgl": true,
+    "calls": 71,
+    "triangles": 3376,
+    "state": "playing"
+  },
+  "page_errors": [],
+  "scope": "Phase 3 Chromium software WebGL renderer; macOS/Linux not verified by this local report"
+}

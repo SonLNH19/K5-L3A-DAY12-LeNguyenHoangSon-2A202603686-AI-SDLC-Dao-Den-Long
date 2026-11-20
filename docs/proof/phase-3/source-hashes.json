@@ -1,0 +1,9 @@
+{
+  "src/game.mjs": "295a8b070c07e8bbd35fd94bbd7e5ee9fcedf33ecd6dbfc12fc25c765d495c6e",
+  "src/validation.mjs": "a7dda7d0d202b42467d3fe5bf15d9e7726415ce7d47a6497299d65258bd26eb4",
+  "src/headless.mjs": "bd14a51b3a4a293ce72d0fa7f983047ca43495849acbb2263a2302a034b77eb9",
+  "src/app.mjs": "4090ba2e43bb3e50b126bbe99dfb3d1b76687ca5d80529189a3638b11f9b7618",
+  "game.contract.json": "a42074e48c9492019ab975538b32182eaaf8f86e259dbe5e0daa5475eb9ca01f",
+  "scripts/proof.mjs": "6244cb392862365f82815f537290356af210a3f51b2787046aa36010bae2f750",
+  "tests/phase3.test.mjs": "ab6def948eef445bd5013eb6a85f8814d6de908f1525c33013ad97bfed4434a0"
+}
