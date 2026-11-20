@@ -398,3 +398,148 @@ Nếu tag đã tồn tại, kiểm tra nó trỏ tới đâu; không tự xóa h
 - Chưa có ticket phase sau; có thể chuẩn bị quy trình nhưng không tự tạo tính năng và gọi đó là yêu cầu khách hàng.
 - Chưa triển khai hosting công khai bằng Sites, chưa tạo GitHub Release, chưa gửi bài lên LMS.
 
+
+
+---
+
+# PHẦN TIẾP TỤC BÀN GIAO: PHASE 2 (TICKET-02 — "BA HÒN ĐẢO")
+*Ghi nhận ngày: 20/11/2026 (GMT+7)*
+
+## 16. Tổng quan công việc đã hoàn thành ở Phase 2
+
+Agent tiếp quản đã triển khai và hoàn thiện trọn vẹn **Phase 2 (TICKET-02 — "Ba hòn đảo")** theo đúng **Test Contract v1.1**, đồng thời sửa triệt để lỗi hiển thị font chữ tiếng Việt do người dùng phản ánh.
+
+### 16.1. Chuẩn hóa số liệu & Luật chơi (Phần 1 & Test Contract v1.1)
+- Nâng cấp `game.contract.json` lên `contract_version: "1.1"`.
+- **Tốc độ chạy:** 6.0 m/s; tăng tốc/dừng trong $\le 0.1$ s; điều khiển trên không đầy đủ.
+- **Nhảy:** Vận tốc $7.0\text{ m/s}$, trọng lực $-20\text{ m/s}^2$, chỉ nhảy khi chạm đất (`grounded`).
+- **Lướt (Dash - Mới):** Vận tốc $14\text{ m/s}$, kéo dài $0.2\text{ s}$ (12 ticks), hồi chiêu $1.5\text{ s}$ (90 ticks tính từ lúc bấm). Lướt theo hướng di chuyển (hoặc hướng mặt nếu đứng yên); lướt trên không giữ nguyên độ cao; không có bất tử khi lướt.
+- **Đom đóm:** Sức chứa tối đa 10; nhặt tự động khi khoảng cách $\text{XZ} \le 1.0\text{ m}$ và $|dY| \le 1.5\text{ m}$. Bắt đầu có 20 con tại 20 điểm trống, trần 30 con; sinh thêm 1 con mỗi 240 ticks nếu còn điểm trống.
+- **Đèn lồng:** Chi phí 10 đom đóm, nạp được nhiều lần, nhớ tiến độ. Tương tác trong bán kính $2.0\text{ m}$; nạp $\min(\text{đang mang}, \text{còn thiếu})$ vào đèn gần nhất (bằng nhau thì ID nhỏ hơn). Vùng an toàn bán kính $6\text{ m}$ chặn Bóng Mực; đẩy bóng ra mép trong 30 ticks không gây sát thương.
+- **Tỏa Sáng (Pulse):** Chi phí 3 đom đóm, bán kính 3D $5.0\text{ m}$ (tâm = chân Mây $+ 0.8\text{ m}$), hồi chiêu $3.0\text{ s}$ (180 ticks). Choáng 120 ticks, 15 tick đầu bị đẩy lùi 4 m ngang.
+- **Bóng Mực (Shades):** Tốc độ $4.0\text{ m/s}$ (Đêm 3: $4.5\text{ m/s}$). Phát hiện 12 m, bỏ đuổi 18 m. Chạm khi $\text{XZ} \le 1.0\text{ m}$ và $|dY| \le 1.5\text{ m}$. Bị đánh: $-1$ Ngọn Lửa, rơi $\lfloor \text{đang mang} / 2 \rfloor$ đom đóm ra vành $1.5\text{--}2.5\text{ m}$ (tồn tại 480 ticks), bất tử 90 ticks. Kẻ địch recoil 2 m trong 60 ticks.
+- **Rơi khỏi đảo ($Y < -10$):** Bỏ qua bất tử: $-1$ Ngọn Lửa, mất sạch đom đóm, chờ 60 ticks (bất động, không nhặt, không bị chạm), hồi sinh ở điểm xuất phát, vận tốc 0, bất tử 90 ticks. Hết máu thua ngay (`no_flames`).
+- **Thời lượng:** Đêm 1: 300s, Đêm 2: 330s, Đêm 3: 360s.
+- **Tính điểm chuẩn hóa:** $+10$ mỗi đom đóm nạp, $+100$ mỗi đèn thắp, $+5$ mỗi Bóng Mực trúng Pulse. Khi thắng: $+\lfloor \text{giây còn lại} \rfloor \times 2 + 50 \times \text{máu còn lại}$.
+
+### 16.2. Bản đồ chuẩn 3 Đêm (Phần 2)
+1. **Đêm 1 — Đảo Bến:** Đảo tròn tâm $(0,0,0)$, bán kính 40 m. 5 đèn L1–L5. 24 điểm sinh đom đóm (8 điểm $R=12$, 16 điểm $R=33$). 12 điểm sinh Bóng Mực $R=37\text{ m}$.
+2. **Đêm 2 — Đảo Cau:** 2 đảo tròn bán kính 28 m, tâm A $(0,0,0)$ và B $(70,0,0)$, nối bằng cầu tre $x \in [26, 44], z \in [-2, 2]$. 2 bục nhảy $R=1\text{ m}$ tại $(20,0,18)$ và $(50,0,-18)$ phóng $V_y = 14\text{ m/s}, V_{\text{ngang}} = 24\text{ m/s}$ sang đảo đối diện. 6 đèn L1–L6.
+3. **Đêm 3 — Đảo Chuông:** Đảo 3 tầng (Tầng 0: $Y=0, R=45\text{ m}$; Tầng 1: $Y=3, R=12\text{--}24\text{ m}, z > 0$; Tầng 2: $Y=6, R=8\text{ m}$). 2 dốc nghiêng rộng 3 m ở góc $30^\circ$ và $150^\circ$. Bục nhảy tại $(0,3,13)$ phóng $V_y = 12\text{ m/s}, V_z = -8\text{ m/s}$ lên tầng 2. Tháp chuông cao 8 m ở tâm tầng 2. 7 đèn L1–L7. Gió mạnh mỗi 30s kéo dài 5s đẩy 2 m/s, báo trước 2s.
+
+### 16.3. Tính năng mới & UI/UX (Phần 3)
+- **Gió Lạc (Drifters D1, D2):** Tốc độ 7 m/s, xuất hiện Đêm 2 & 3. Chuyển sang đuổi khi Mây mang $\ge 5$ đom đóm và cự ly $\le 15\text{ m}$. Cướp $\min(3, \text{đang mang})$, sau đó bỏ chạy (flee 240 ticks). Tỏa Sáng trúng Gió Lạc đang flee sẽ làm rơi lại toàn bộ số đom đóm đã cướp.
+- **Bùa Gió (Charms C1, C2):** Tồn tại 600 ticks (10s), tăng tốc độ lên 7.2 m/s và xóa hồi chiêu Lướt. Tự hồi sinh sau 2700 ticks (45s).
+- **Chuỗi 3 Đêm:** Menu chính $\to$ Giới thiệu Đêm $\to$ Chơi $\to$ Kết quả $\to$ Đêm kế tiếp.
+- **Tạm dừng & Cài đặt:** Phím Esc hoặc P. Menu cài đặt cho phép chỉnh âm lượng tổng và độ nhạy chuột, lưu vào `localStorage`.
+- **HUD & Chỉ dẫn:** Hiển thị 10 ô đom đóm, đồng hồ nhấp nháy đỏ khi $\le 30\text{ s}$, vòng tròn SVG hồi chiêu Lướt / Tỏa Sáng, và mũi tên 2D chỉ hướng đến đèn chưa thắp gần nhất khi nằm ngoài tầm nhìn.
+- **Bảng màu & Ánh sáng chuẩn:** Độ sáng đảo tăng tuyến tính theo tiến độ thắp đèn: `intensity = 0.15 + 0.55 * (lit / total)`.
+
+### 16.4. Sửa lỗi vỡ font tiếng Việt
+- **Lỗi:** Font serif `Georgia` trên Windows bị lỗi tách dấu huyền khỏi chữ `ê` trong cụm từ "Mang ánh sáng về nhà." (thành `v` `ê` ``` ` ``` rồi cách trống đến chữ `nhà.`).
+- **Khắc phục:** Thay thế toàn bộ font stack tiêu đề trong `style.css` sang font sans-serif hệ thống chuẩn Unicode:
+  `font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;`
+- Đã kiểm tra lại giao diện thực tế và cập nhật ảnh chụp tại `docs/proof/phase-2/browser/intro.png`.
+
+---
+
+## 17. Trạng thái kiểm chứng & Bằng chứng thực tế Phase 2
+
+Toàn bộ bằng chứng được lưu tại thư mục:
+```text
+docs/proof/phase-2/
+```
+
+1. **Unit tests & Regression:**
+   - Lệnh: `npm test` hoặc `npm run verify`
+   - Kết quả: **45/45 tests passed (100%)** trong thời gian ~1.0s.
+   - Báo cáo TAP: `docs/proof/phase-2/tests.tap`.
+2. **Tính tất định 3 Đêm (Determinism):**
+   - Chạy 2 lần cùng seed trên cả 3 đêm:
+     - `determinism-night1-a.jsonl` trùng khớp từng byte với `determinism-night1-b.jsonl`.
+     - `determinism-night2-a.jsonl` trùng khớp từng byte với `determinism-night2-b.jsonl`.
+     - `determinism-night3-a.jsonl` trùng khớp từng byte với `determinism-night3-b.jsonl`.
+3. **Headless Benchmark hiệu năng (DoD $\le 30\text{ s}$):**
+   - Chạy 21.600 ticks headless trên Đêm 3: hoàn thành trong **0.510 giây** (nhanh hơn 58 lần so với yêu cầu).
+   - Bằng chứng: `docs/proof/phase-2/benchmark-21600.jsonl` và `report.json`.
+4. **Bot chơi tự động (Full run):**
+   - Chạy bằng input thật trong thế giới mặc định: thắng Đêm 1 trong **11.837 ticks (197.28s)** với **1.055 điểm**.
+   - Bằng chứng: `docs/proof/phase-2/full-run.inputs.json`, `full-run.jsonl`, `full-run.summary.json`.
+5. **Kịch bản Headless Scenario cho từng tính năng mới:**
+   - `dash.jsonl`: kiểm chứng lướt 14 m/s, thời gian 12 ticks, hồi chiêu.
+   - `wind-charm.jsonl`: kiểm chứng bùa gió tăng tốc 7.2 m/s, lướt liên tục.
+   - `jump-pad.jsonl`: kiểm chứng lực phóng bục nhảy $V_y = 14, V_{\text{ngang}} = 24$.
+   - `stray-wind.jsonl`: kiểm chứng Gió Lạc đuổi, cướp và rơi đom đóm khi dính Pulse.
+   - `fall.jsonl`: kiểm chứng rơi khỏi đảo $Y < -10$, trừ máu và hồi sinh sau 60 ticks.
+   - `pause.jsonl`: kiểm chứng dừng logic game khi tạm dừng.
+   - `night2.jsonl` & `night3.jsonl`: kiểm chứng mô phỏng Đêm 2 và Đêm 3.
+6. **Browser Tests (Playwright):**
+   - 4/4 tests passed: kiểm tra render 3D WebGL, bàn phím WASD, Lướt, Tạm dừng, nạp đèn, tỏa sáng, responsive cửa sổ nhỏ.
+   - Ảnh chụp thực tế: `intro.png`, `playing.png`, `won.png`, `lost.png`, `pulse-and-lit-lamp.png`, `small-window.png`.
+
+---
+
+## 18. Các lỗi AI đã gặp và cách sửa trong Phase 2
+
+1. **Lỗi thứ tự gán vận tốc bục nhảy (Jump Pad):**
+   - *Nguyên nhân:* Vận tốc `padVel` được gán sau khối tính toán `p.vel`, khiến tick kích hoạt có vận tốc ngang bằng 0.
+   - *Khắc phục:* Gán trực tiếp `p.vel` ngay khi chạm bục để bảo đảm người chơi được phóng tức thì.
+2. **Lỗi lọc mảng Gió Lạc khi bị Tỏa Sáng:**
+   - *Nguyên nhân:* Bộ lọc mảng loại bỏ drifter khi `fleeTicks <= 0`, trong khi drifter bị bắn rơi đồ vẫn cần tồn tại `despawnTicks = 120`.
+   - *Khắc phục:* Điều chỉnh điều kiện giữ lại thực thể nếu `d.despawnTicks > 0`.
+3. **Độ sâu rơi khỏi đảo ($Y < -10$):**
+   - *Nguyên nhân:* Test ban đầu chỉ cho 60 bước di chuyển từ mép đảo nên chưa kịp rơi xuống dưới $-10\text{ m}$.
+   - *Khắc phục:* Tăng thời gian kiểm tra lên 90 bước để rơi qua ngưỡng $-10\text{ m}$ dứt khoát.
+4. **Trùng lặp cờ CLI trong `scripts/proof.mjs`:**
+   - *Nguyên nhân:* Nối mảng tham số làm lặp cờ `--night`.
+   - *Khắc phục:* Sử dụng `Map` để ghi đè tham số trước khi gọi tiến trình con.
+5. **Bot chơi tự động bị hết giờ ở Đêm 1:**
+   - *Nguyên nhân:* Bot cũ chỉ đến đèn khi gom đủ 10 con, trong khi ở Phase 2 đom đóm phân tán và Bóng Mực đuổi ráo riết.
+   - *Khắc phục:* Bổ sung chiến lược nạp sớm (khi mang $\ge 4$ con gần đèn hoặc $\ge 7$ con) và kết hợp Lướt (Dash).
+
+---
+
+## 19. Tình trạng Git, Lịch sử Commits & Tags
+
+Kho mã nguồn local hiện đang ở trạng thái sạch (`working tree clean`), nhánh `main`, với các mốc commit:
+
+* `ea2b375`: **Tag `phase-1`** (Hoàn thành Phase 1).
+* `11ab069`: Lưu tài liệu bàn giao từ agent trước.
+* `d23ba37`: Chuẩn hóa số liệu và triển khai Test Contract v1.1.
+* `ddd0991`: Mở rộng 3 hòn đảo, HUD, điều khiển lướt và browser test.
+* `3ec4cc7`: Ghi chép tài liệu, bằng chứng proof và benchmark Phase 2.
+* `fc02144`: **Tag `phase-2`** (Sửa triệt để lỗi font tiếng Việt `Segoe UI`).
+
+Lệnh để người dùng đẩy toàn bộ lên GitHub:
+```powershell
+cd "d:\LAB AITC\LAB 12\K5-L3A-DAY12-LeNguyenHoangSon-2A202603686-AI-SDLC-Dao-Den-Long"
+git push origin main
+git push origin phase-1
+git push origin phase-2 --force
+```
+
+---
+
+## 20. Hướng dẫn tiếp tục cho Agent tiếp theo (Phase 3 — Ticket-03)
+
+Khi nhận được đề bài **Ticket-03 (Phase 3)** từ người dùng / giảng viên:
+
+1. **Đọc kỹ đề bài Ticket-03:**
+   - Xác định rõ các luật mới nào được thêm vào.
+   - Xác định các luật cũ nào ở Phase 1 hoặc Phase 2 bị **thay thế hoặc bãi bỏ**.
+   - Tuyệt đối không tự suy đoán luật chơi khi chưa có đề bài Ticket-03.
+2. **Cập nhật tài liệu spec & kế hoạch kiểm chứng:**
+   - Tạo file `docs/notes/phase-3.md` ghi rõ acceptance criteria và bảng đối chiếu thay đổi luật.
+   - Sửa các test cũ bị luật mới thay thế kèm giải trình lý do rõ ràng trong file test (không xóa âm thầm).
+3. **Cập nhật mã nguồn & Test Contract:**
+   - Cập nhật `game.contract.json` (nếu có version mới, ví dụ v1.2 hoặc nâng cấp tuning).
+   - Triển khai logic trong `src/game.mjs` (giữ tính tất định PRNG và fixed-step 60 Hz).
+   - Cập nhật hiển thị 3D trong `src/app.mjs` nếu có cơ chế/thực thể mới.
+4. **Kiểm tra và sinh bằng chứng:**
+   - Chạy `npm test` và `npm run verify` bảo đảm 100% tests pass.
+   - Chạy `npm run proof` để sinh bằng chứng đầy đủ vào `docs/proof/phase-3/`.
+   - Chạy `npm run test:browser` chụp lại ảnh màn hình.
+   - Ghi lại đánh giá và các lỗi AI gặp phải vào `docs/notes/evaluation-phase-3.md`.
+5. **Commit & Gắn tag:**
+   - Thực hiện commit nhỏ, rõ ràng.
+   - Gắn tag `phase-3` vào commit hoàn thành Phase 3 và hướng dẫn người dùng push.
