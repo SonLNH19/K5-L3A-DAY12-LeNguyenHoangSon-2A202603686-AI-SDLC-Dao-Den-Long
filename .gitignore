@@ -37,3 +37,6 @@ output.jsonl
 # Release bundles are uploaded to GitHub Releases, not source history.
 artifacts/*.zip
 artifacts/release-extracted/
+
+# Local agent handoff
+/hướng dẫn chạy của agent trước.md
