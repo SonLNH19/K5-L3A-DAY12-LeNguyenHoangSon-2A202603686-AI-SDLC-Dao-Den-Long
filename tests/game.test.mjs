@@ -67,19 +67,20 @@ test('pickup includes exact XZ boundary and height difference (<= 1.5m)', () => 
   assert.equal(e[0].data.carried, 1);
 });
 
-test('capacity leaves additional motes available (Phase 2 capacity 10)', () => {
+test('initial capacity leaves additional motes available (Phase 3 starts at 10)', () => {
   const g = make({ player: { carried: T.carry_capacity - 1 }, motes: [[0, 0, 0], [0, 0, 0]] });
   g.step();
   assert.equal(g.player.carried, T.carry_capacity);
   assert.equal(g.motes.length, 1);
 });
 
-test('deposit partial then full emits once, scores +10 per deposit and preserves surplus', () => {
+// Ticket-03 replaces +10/deposit with +5; edge-trigger and partial deposits are retained.
+test('deposit partial then full emits once, scores +5 per deposit and preserves surplus', () => {
   const g = make({ player: { carried: 3 }, lanterns: [{ id: 'L1', pos: [0, 0, 0] }] });
   let e = g.step({ interact: true });
   assert.deepEqual(e.map(e => e.name), ['deposit']);
   assert.equal(g.lanterns[0].deposited, 3);
-  assert.equal(g.score, 30); // 3 * 10
+  assert.equal(g.score, 15); // 3 * 5
   g.player.carried = T.carry_capacity;
   e = g.step();
   assert.equal(e.length, 0);
@@ -87,7 +88,7 @@ test('deposit partial then full emits once, scores +10 per deposit and preserves
   e = g.step({ interact: true });
   assert.deepEqual(e.map(e => e.name), ['deposit', 'lantern_lit']);
   assert.equal(g.player.carried, T.carry_capacity - (T.lantern_cost - 3));
-  assert.equal(g.score, 30 + (T.lantern_cost - 3) * 10 + T.score.per_lantern);
+  assert.equal(g.score, 15 + (T.lantern_cost - 3) * 5 + T.score.per_lantern);
 });
 
 test('interact at exact radius works; beyond radius does not', () => {
@@ -171,14 +172,20 @@ test('lit lamp repels shades and protects player', () => {
   assert.equal(g.player.flames, T.flames);
 });
 
-test('win scores once and stops simulation', () => {
+// REPLACED: all_lit early win (v1.1) is forbidden by Ticket-03 §3.
+test('lighting final lantern does not end night; winning dawn scores once and stops simulation', () => {
   const g = make({ player: { carried: T.lantern_cost }, lanterns: [{ id: 'L1', pos: [0, 0, 0] }, ...['L2', 'L3', 'L4', 'L5'].map(id => ({ id, lit: true }))] });
   const e = g.step({ interact: true });
-  assert.equal(g.state, 'won');
-  assert.equal(e.at(-1).data.reason, 'all_lit');
-  const snapshot = g.snapshot();
-  g.step();
-  assert.deepEqual(g.snapshot(), snapshot);
+  assert.equal(g.state, 'playing');
+  assert.equal(e.at(-1).name, 'lantern_lit');
+  assert.equal(e.some(item => item.name === 'game_over'), false);
+  const dawn = make({ time_left_s: 1 / 60, lanterns: ['L1','L2','L3'].map(id=>({id,lit:true})) });
+  assert.equal(dawn.step().at(-1).data.reason, 'dawn_survived');
+  assert.equal(dawn.score, 3 * (50 + 99) + 3 * 50);
+  assert.equal(dawn.state, 'won');
+  const snapshot = dawn.snapshot();
+  dawn.step();
+  assert.deepEqual(dawn.snapshot(), snapshot);
 });
 
 test('loses with no_flames', () => {
@@ -196,7 +203,8 @@ test('scenario time override counts down by executed steps and dawn ends early',
   assert.equal(e.at(-1).data.reason, 'dawn');
 });
 
-test('explicit tie: last lamp beats dawn', () => {
+// REPLACED: dawn now evaluates the final lit ratio, not all_lit priority.
+test('last-tick lighting counts at dawn after interaction', () => {
   const g = make({ time_left_s: 1 / 60, player: { carried: T.lantern_cost }, lanterns: [{ id: 'L1', pos: [0, 0, 0] }, ...['L2', 'L3', 'L4', 'L5'].map(id => ({ id, lit: true }))] });
   g.step({ interact: true });
   assert.equal(g.state, 'won');

@@ -34,7 +34,9 @@ export function validateScenario(s, tuning) {
   if ('player' in s) {
     object(s.player, 'player');
     if ('pos' in s.player) position(s.player.pos, 'player.pos');
-    if ('carried' in s.player) number(s.player.carried, 'carried', 0, tuning.carry_capacity, true);
+    if ('successful_lights' in s.player) number(s.player.successful_lights, 'successful_lights', 0, Infinity, true);
+    const capacity = Math.min(tuning.capacity_max, tuning.carry_capacity + 2 * (s.player.successful_lights ?? 0));
+    if ('carried' in s.player) number(s.player.carried, 'carried', 0, capacity, true);
     if ('flames' in s.player) number(s.player.flames, 'flames', 0, Infinity, true);
     for (const k of ['invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) {
       if (k in s.player) number(s.player[k], `player.${k}`, 0, Infinity, true);
@@ -51,7 +53,7 @@ export function validateScenario(s, tuning) {
   if ('shades' in s) {
     if (!Array.isArray(s.shades)) fail('shades: phải là mảng');
     const ids = new Set();
-    const validStates = new Set(['spawning', 'wander', 'chase', 'recoil', 'stunned']);
+    const validStates = new Set(['spawning', 'wander', 'chase', 'recoil', 'stunned', 'drain']);
     for (const shade of s.shades) {
       object(shade, 'shade'); position(shade.pos, 'shade.pos');
       if ('id' in shade) {
@@ -60,6 +62,7 @@ export function validateScenario(s, tuning) {
       }
       if ('state' in shade && !validStates.has(shade.state)) fail(`shade.state: không hợp lệ (${shade.state})`);
       if ('state_ticks_left' in shade) number(shade.state_ticks_left, 'shade.state_ticks_left', 0, Infinity, true);
+      if ('target_lantern_id' in shade && !/^L[1-7]$/.test(shade.target_lantern_id)) fail('shade.target_lantern_id: cần L1…L7');
     }
   }
   if ('drifters' in s) {
@@ -99,7 +102,13 @@ export function validateScenario(s, tuning) {
       if ('pos' in l) position(l.pos, 'lantern.pos');
       if ('deposited' in l) number(l.deposited, 'deposited', 0, tuning.lantern_cost, true);
       if ('lit' in l) boolean(l.lit, 'lit');
-      if (l.lit === false && l.deposited === tuning.lantern_cost) fail('Đèn đủ ánh sáng không thể lit=false');
+      if ('fuel' in l) number(l.fuel, 'fuel', 0, tuning.fuel_max);
+      if ('ever_lit' in l) boolean(l.ever_lit, 'ever_lit');
+      const cost = l.ever_lit ? tuning.relight_cost : tuning.lantern_cost;
+      if (l.lit === false && l.deposited >= cost) fail('Đèn đủ ánh sáng không thể lit=false');
+      if (l.lit === true && l.fuel === 0) fail('Đèn sáng phải có dầu lớn hơn 0');
+      if (l.lit === false && l.fuel > 0) fail('Đèn tắt không có dầu');
+      if (l.lit === true && l.ever_lit === false) fail('Đèn sáng phải ever_lit=true');
     }
   }
   return s;

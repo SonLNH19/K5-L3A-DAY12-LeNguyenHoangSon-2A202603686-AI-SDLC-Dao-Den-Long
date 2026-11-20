@@ -40,12 +40,13 @@ test('zero ticks emits initial snapshot then end, does not process input', () =>
   assert.equal(lines[0].score, 0);
 });
 
-test('winning scenario stops early with correct event tick and score', () => {
+// Ticket-03 replaces early all_lit with waiting for dawn; original fixture remains useful.
+test('all-lit scenario stays playing before dawn with new deposit score', () => {
   const { result, lines } = cli(['--scenario', 'tests/scenarios/win.json', '--inputs', 'tests/scenarios/win.inputs.json', '--snapshot-every', '1']);
   assert.equal(result.status, 0, result.stderr);
-  assert.deepEqual(lines.filter(l => l.type === 'event').map(l => l.name), ['deposit', 'lantern_lit', 'game_over']);
+  assert.deepEqual(lines.filter(l => l.type === 'event').map(l => l.name), ['deposit', 'lantern_lit']);
   assert.ok(lines.filter(l => l.type === 'event').every(l => l.tick === 1));
-  assert.deepEqual(lines.at(-1), { type: 'end', ticks: 1, state: 'won', score: 468 });
+  assert.deepEqual(lines.at(-1), { type: 'end', ticks: 20, state: 'playing', score: 150 });
 });
 
 test('losing scenario stops at first tick and emits no_flames', () => {
